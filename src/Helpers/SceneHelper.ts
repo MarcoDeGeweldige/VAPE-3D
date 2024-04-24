@@ -12,6 +12,7 @@ import { Direction } from "../Compositions/Transformable";
 export default class SceneHelper {
   private worldInfo: WorldInformation;
 
+  //rotation 
   private camera: ArcRotateCamera;
   private canvas: any;
 
@@ -19,7 +20,7 @@ export default class SceneHelper {
     this.worldInfo = worldInfo;
 
     this.canvas = canvas;
-
+    //create a arc rotation camera 
     this.camera = createCamera(this.worldInfo.getScene(), this.canvas);
   }
 
