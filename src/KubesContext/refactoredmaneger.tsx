@@ -1,7 +1,7 @@
 
 import { AdvancedDynamicTexture, Button3D, InputText, TextBlock } from "@babylonjs/gui";
 import { GetText } from "./Contextoptions";
-import { VerticalAlignBottom } from "@mui/icons-material";
+import { UISingleton } from "./UIFunctions";
 
 export class InputManager {
     private advancedUI: AdvancedDynamicTexture;
@@ -32,12 +32,27 @@ export class InputManager {
         return this.inputBox;
     }
 
+
     // Attach listeners for keyboard input
     static attachInputListeners(input: InputText, button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
         input.onBeforeKeyAddObservable.add((event) => {
             button.content = GetText(event.text);
-
         });
+
+        const eContainer =
+
+        UISingleton.getInstance().getScene()!.onKeyboardObservable.add((event) => {
+            switch(event.event.key){
+                case "Escape" :
+                    console.log("closing input box", input.text);
+                    button.isVisible = false; // Example action: Hide button
+                    input.isVisible = false;
+                    onclose(false);
+                    eContainer?.remove(); 
+                break;
+            }
+        })
+
         // Handle keyboard events (e.g., pressing Enter)
         input.onKeyboardEventProcessedObservable.add((keyboardEvent) => {
             if (keyboardEvent.key === "Enter") {
@@ -47,6 +62,7 @@ export class InputManager {
                 uptxt(input.text);
                 input.isVisible = false;
                 onclose(false);
+                eContainer?.remove(); 
             }
         });
     }
@@ -67,7 +83,7 @@ export function createInputBox(): InputText {
     input.width = "400px";
     input.maxWidth = "400px";
     input.height = "40px";
-    input.text = "Type here...";
+    input.text = "";
     input.color = "white";
     input.background = "green";
     return input;
@@ -97,7 +113,6 @@ export class NewManager {
 }
 
 
-
 export class ExpresionDisplay {
 
     expressionbox: TextBlock;
@@ -121,7 +136,7 @@ export class ExpresionDisplay {
         this.expressionbox.text = exp;
     }
 
-    addExtraBox() {
+    addExtraBoxO() {
 
         const e = new TextBlock();
 
@@ -140,14 +155,14 @@ export class ExpresionDisplay {
     getExpressionBox() {
         return this.expressionbox;
     }
-    getExtraBox(): TextBlock {
+    getExtraBoxO(): TextBlock {
 
         if (this.extrabox) {
             return this.extrabox;
         }
         else {
 
-            return this.addExtraBox();
+            return this.addExtraBoxO();
         }
     }
 

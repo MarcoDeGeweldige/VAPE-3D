@@ -6,18 +6,14 @@ import { createRoot, Root } from "react-dom/client";
 
 export class BuilderSingleton {
   private static instance: BuilderSingleton;
-
-  private builderCanvas = <BabylonSce />;
   public createdRoot = false;
   private expressionResult = "";
-
 
   private select?: (statement: string) => void;
 
   constructor() {
 
   }
-
 
   //gebruik dit voor expressies
   public getCubeRenderer(): HTMLElement {
@@ -31,10 +27,6 @@ export class BuilderSingleton {
     return evalGuiDiv;
   }
 
-
-
-
-
   public static getInstance(): BuilderSingleton {
     if (!BuilderSingleton.instance) {
       BuilderSingleton.instance = new BuilderSingleton();
@@ -42,7 +34,6 @@ export class BuilderSingleton {
     return BuilderSingleton.instance;
   }
 
-  //deze is belangrijk
 
   public setDataContainer(updateStatement: (statement: string) => void) {
 
@@ -50,10 +41,6 @@ export class BuilderSingleton {
 
   }
 
-  public getBuilderCanvasBad() {
-
-    return this.builderCanvas;
-  }
   public getnewBuilderCanvas() {
 
     return <BabylonSce />;
@@ -91,9 +78,6 @@ export class BuilderSingleton {
         this.createdRoot = true;
         const root = createRoot(container!);
         root.render(this.getnewBuilderCanvas());
-
-      }
-      else {
 
       }
     }

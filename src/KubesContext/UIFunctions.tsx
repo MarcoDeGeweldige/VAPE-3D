@@ -50,6 +50,7 @@ export class UISingleton {
 
                         this.paneldis.updateVis(!this.paneldis.isVisible);
                         this.oper.updateVis(false);
+        
                     }
                 }
                 if (keyboardEvent.type == KeyboardEventTypes.KEYDOWN) {
