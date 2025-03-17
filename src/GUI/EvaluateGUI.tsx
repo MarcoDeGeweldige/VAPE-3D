@@ -59,11 +59,9 @@ export default function EvaluateGUI({ selectedObject }: { selectedObject: Evalua
         <Grid>
           <IconButtonLarge
             onClick={() => {
-
               BuilderSingleton.getInstance().renderNewBuilderCanvas(selectedObject.changeStatement.bind(selectedObject));
+              selectedObject.onDeselect();
             }}
-
-            
             icon={<BlindTwoTone />}
           />
         </Grid>

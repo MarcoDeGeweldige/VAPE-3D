@@ -9,7 +9,6 @@ export class BuilderSingleton {
 
   private builderCanvas = <BabylonSce />;
   public createdRoot = false;
-
   private expressionResult = "";
 
 
@@ -73,13 +72,9 @@ export class BuilderSingleton {
 
     this.expressionResult = res;
     this.setExpressionResult(res);
-
-
     this.renderStart();
 
     return this.expressionResult;
-
-
   }
 
   public renderStart() {
