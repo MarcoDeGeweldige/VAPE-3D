@@ -4,6 +4,9 @@ import { Grid, TextField, Tooltip, Typography } from "@mui/material";
 import { KeyGroup } from "./InputFilter";
 import InputField from "./Components/InputField";
 import PositionArea from "./Components/PositionArea";
+import IconButtonLarge from "./Components/IconButtonLarge";
+import { BuilderSingleton } from "../KubesContext/switchabalecanavas";
+import { BlindTwoTone } from "@mui/icons-material";
 
 export default function EvaluateGUI({ selectedObject }: { selectedObject: EvaluateObject }) {
   const guiBox = selectedObject.getDataContainer();
@@ -51,6 +54,17 @@ export default function EvaluateGUI({ selectedObject }: { selectedObject: Evalua
             value={statement}
             onChange={(e) => setStatement(e.target.value)}
             onBlur={(e) => onBlur(e.target)}
+          />
+        </Grid>
+        <Grid>
+          <IconButtonLarge
+            onClick={() => {
+
+              BuilderSingleton.getInstance().renderNewBuilderCanvas(selectedObject.changeStatement.bind(selectedObject));
+            }}
+
+            
+            icon={<BlindTwoTone />}
           />
         </Grid>
         <Grid item>

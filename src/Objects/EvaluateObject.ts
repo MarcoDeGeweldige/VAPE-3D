@@ -61,6 +61,7 @@ export default class EvaluateObject extends BaseObject {
       this.index
     );
   }
+  
 
   public getStorable(): Storable {
     return this.storable;
