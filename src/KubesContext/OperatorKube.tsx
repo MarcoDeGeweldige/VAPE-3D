@@ -17,34 +17,33 @@ export class OperatorCube implements CubeBase {
   model: Mesh;
   _pos: Vector3;
   _txt: string = "";
-  text2: TextBlock;
+  textBlock: TextBlock;
   panel: StackPanel3D;
-  conPanel: DisplayPanel3D;
+  displayPanel: DisplayPanel3D;
   inputA: Cube;
   inputB: Cube;
   OutputCube: Cube;
-  cType: CubeType;
+  cubeType: CubeType;
   parent?: Cube;
   slots: CubeSlots;
   pipes: Mesh[] = [];
 
-
-  constructor(manager: ExpressionUiManeger, pos: Vector3, desc: string, outputCube?: Cube, dir: Direction = Direction.Up) {
-    this._pos = pos;
+  constructor(manager: ExpressionUiManeger, position: Vector3, description: string, outputCube?: Cube, dir: Direction = Direction.Up) {
+    this._pos = position;
     this.manager = manager;
-    this._txt = desc;
-    this.text2 = SetTextBlock(desc);
+    this._txt = description;
+    this.textBlock = SetTextBlock(description);
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
-    this.model.position = pos;
-    this.cType = CubeType.Operator;
+    this.model.position = position;
+    this.cubeType = CubeType.Operator;
 
     if (outputCube) {
       outputCube.setAsOutputKube(this);
       this.pipes.push(CreatePipe(this.getPos(), outputCube.getPos(), dir));
     }
-    this.slots = new CubeSlots(pos, this.getModel());
-    this.conPanel = new DisplayPanel3D(manager, pos, this, desc);
-    this.panel = addNew3DPanell(this.conPanel, pos, desc, manager.Getmanager(), manager.GetScene());
+    this.slots = new CubeSlots(position, this.getModel());
+    this.displayPanel = new DisplayPanel3D(manager, position, this, description);
+    this.panel = addNew3DPanell(this.displayPanel, position, description, manager.Getmanager(), manager.GetScene());
     this.updateColor();
     this.inputA = this.createOperandKubes(manager, this._pos, Direction.Left, "AA", CubeType.Operand);
     this.inputB = this.createOperandKubes(manager, this._pos, Direction.Down, "BB", CubeType.Operand);
@@ -95,21 +94,16 @@ export class OperatorCube implements CubeBase {
     return this.slots;
   }
   getCubeType(): CubeType {
-    return this.cType;
+    return this.cubeType;
   }
 
   createSubOperator(outputCube: Cube, dir: Direction) {
 
     if (outputCube === outputCube.OperatorCube.inputA) {
-      let directionalPos = calculateEndPosition(outputCube.getPos(), dir);
-      const n = new OperatorCube(this.manager, directionalPos, "SB", this.inputA, dir);
-      n.setParent(outputCube);
-
+      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPos(), dir), "SB", this.inputA, dir).setParent(outputCube);
     }
     if (outputCube === outputCube.OperatorCube.inputB) {
-      let directionalPos = calculateEndPosition(outputCube.getPos(), dir);
-      const n = new OperatorCube(this.manager, directionalPos, "SB", this.inputB, dir);
-      n.setParent(outputCube);
+      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPos(), dir), "SB", this.inputB, dir).setParent(outputCube);
     }
 
   }
@@ -159,7 +153,7 @@ export class OperatorCube implements CubeBase {
 
     this.model.isVisible = false;
     this.panel.dispose();
-    this.conPanel.deletePanels();
+    this.displayPanel.deletePanels();
     this.pipes.forEach(elemt => {
       elemt.dispose();
     })

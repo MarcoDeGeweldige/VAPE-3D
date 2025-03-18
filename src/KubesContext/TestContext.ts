@@ -49,13 +49,13 @@ export class Interaction3Dpanel {
     }
 
     private setupAdvancedButtons(manager: ExpressionUiManeger, updateText: (txt: string) => void, inputButton: Button3D) {
-        if (this.parent.parent.getCubeType() === CubeType.Operand) {
+        if (this.parent.cubeBase.getCubeType() === CubeType.Operand) {
 
             const addExpressionButton = new Button3D();
             addExpressionButton.content = SetTextBlock("add exp");
             addExpressionButton.onPointerUpObservable.add(() => {
 
-                UISingleton.getInstance().setPanelFunctions(this.parent.parent, manager, updateText);
+                UISingleton.getInstance().setPanelFunctions(this.parent.cubeBase, manager, updateText);
                 this.setVisibility(false);
             });
             this.panel.addControl(addExpressionButton);
@@ -65,7 +65,7 @@ export class Interaction3Dpanel {
             OperatorEditButton.content = SetTextBlock("edit operator");
 
             OperatorEditButton.onPointerUpObservable.add(() => {
-                UISingleton.getInstance().setOperFunctions(this.parent.parent, this.parent.updateText.bind(this.parent), this.setVisibility.bind(this));
+                UISingleton.getInstance().setOperFunctions(this.parent.cubeBase, this.parent.updateText.bind(this.parent), this.setVisibility.bind(this));
                 this.setVisibility(false);
             });
             this.panel.addControl(OperatorEditButton);

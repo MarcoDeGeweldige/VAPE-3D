@@ -50,27 +50,19 @@ export const SetTextBlock = (description: string): TextBlock => {
 export const CreatePipe = (start: Vector3, end: Vector3, dir: Direction = Direction.Down): Mesh => {
   const cylinder = MeshBuilder.CreateCylinder("cylinder", { diameterTop: 0 });
   cylinder.lookAt(DirectionVectors[dir]);
-
   cylinder.rotation.x = cylinder.rotation.x - (Math.PI / 2);
   cylinder.position = Vector3.Center(start, end);
-
   cylinder.material = createPipeMaterial();
   cylinder.isPickable = false;
-
   return cylinder;
-
 };
 
 const createPipeMaterial = function(): GradientMaterial{
-
   const newMaterial = new GradientMaterial("mymat");
-
   newMaterial.bottomColor = Color3.Green();
   newMaterial.topColor = Color3.Red();
   newMaterial.offset = 0.1;
-
   newMaterial.smoothness = 0.4;
-
   return newMaterial;
 
 
