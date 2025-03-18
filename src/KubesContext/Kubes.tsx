@@ -18,7 +18,7 @@ export interface CubeBase {
   getText(): string;
   setText(txt: string): void;
   updateColor(mat?: Material): void;
-  getPos(): Vector3;
+  getPosition(): Vector3;
   getModel(): Mesh;
   getSlots(): CubeSlots;
   getCubeType(): CubeType;
@@ -81,7 +81,7 @@ export class Cube implements CubeBase {
   setText(txt: string): void {
     this._txt = txt;
   }
-  getPos(): Vector3 {
+  getPosition(): Vector3 {
     return this._pos;
   }
 

@@ -39,14 +39,15 @@ export class OperatorCube implements CubeBase {
 
     if (outputCube) {
       outputCube.setAsOutputKube(this);
-      this.pipes.push(CreatePipe(this.getPos(), outputCube.getPos(), dir));
+      this.pipes.push(CreatePipe(this.getPosition(), outputCube.getPosition(), dir));
     }
     this.slots = new CubeSlots(position, this.getModel());
     this.displayPanel = new DisplayPanel3D(manager, position, this, description);
     this.panel = addNew3DPanell(this.displayPanel, position, description, manager.Getmanager(), manager.GetScene());
     this.updateColor();
-    this.inputA = this.createOperandKubes(manager, this._pos, Direction.Left, "AA", CubeType.Operand);
-    this.inputB = this.createOperandKubes(manager, this._pos, Direction.Down, "BB", CubeType.Operand);
+    this.inputA = this.createOperandCubes(manager, this._pos, Direction.Left, "AA", CubeType.Operand);
+    this.inputB = this.createOperandCubes(manager, this._pos, Direction.Down, "BB", CubeType.Operand);
+
     this.OutputCube = this.setOutPutCube(dir, outputCube);
     UISingleton.getInstance().setRootExpression(this);
 
@@ -69,7 +70,7 @@ export class OperatorCube implements CubeBase {
   setText(txt: string): void {
     this._txt = txt;
   }
-  getPos(): Vector3 {
+  getPosition(): Vector3 {
     return this._pos;
   }
 
@@ -79,7 +80,7 @@ export class OperatorCube implements CubeBase {
       return outCube;
     }
     else {
-      return this.createOperandKubes(this.manager, this._pos, dir, "CC", CubeType.Operand);
+      return this.createOperandCubes(this.manager, this._pos, dir, "CC", CubeType.Operand);
     }
   }
 
@@ -100,14 +101,15 @@ export class OperatorCube implements CubeBase {
   createSubOperator(outputCube: Cube, dir: Direction) {
 
     if (outputCube === outputCube.OperatorCube.inputA) {
-      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPos(), dir), "SB", this.inputA, dir).setParent(outputCube);
+      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPosition(), dir), "SB", this.inputA, dir).setParent(outputCube);
     }
     if (outputCube === outputCube.OperatorCube.inputB) {
-      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPos(), dir), "SB", this.inputB, dir).setParent(outputCube);
+      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPosition(), dir), "SB", this.inputB, dir).setParent(outputCube);
     }
 
   }
 
+  //delete expression if there is no subexpression
   deleteExpression(): void {
 
     if (!this.hasSubOperator()) {
@@ -125,29 +127,19 @@ export class OperatorCube implements CubeBase {
     }
   }
 
-  createOperandKubes(manager: ExpressionUiManeger, pos: Vector3, dir: Direction, desc: string, Ctype: CubeType) {
-
-    let freedirs = scanDirections(this.model, true);
-
-    console.log("dir picked = " + DirectionVectors[dir]);
-    if (freedirs.includes(dir)) {
-      console.log("direction is safe " + dir)
-      let directionalPos = calculateEndPosition(pos, dir);
-      const newCube = new Cube(manager, directionalPos, desc, Ctype, this, dir);
-      this.pipes.push(CreatePipe(this.getPos(), newCube._pos, dir));
+  createOperandCubes(expressionManager: ExpressionUiManeger, position: Vector3, direction: Direction, description: string, cubeType: CubeType): Cube {
+    if(scanDirections(this.model, true).includes(direction)){
+      const newCube = new Cube(expressionManager, calculateEndPosition(position, direction), description, cubeType, this, direction);
+      this.pipes.push(CreatePipe(this.getPosition(), newCube._pos, direction));
       return newCube;
-
     }
-    else {
-      console.log("direction taken " + dir);
-      let nextdir = getFreeDirection(freedirs);
-      let directionalPos = calculateEndPosition(pos, nextdir);
-      const newCube = new Cube(manager, directionalPos, desc, Ctype, this, nextdir);
-      this.pipes.push(CreatePipe(this.getPos(), newCube._pos, nextdir));
+    else{
+      let nextdir = getFreeDirection(scanDirections(this.model, true));
+      const newCube = new Cube(expressionManager, calculateEndPosition(position, nextdir), description, cubeType, this, nextdir);
+      this.pipes.push(CreatePipe(this.getPosition(), newCube._pos, nextdir));
       return newCube;
     }
   }
-
 
   deleteMesh() {
 

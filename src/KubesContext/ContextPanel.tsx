@@ -38,7 +38,7 @@ export class DisplayPanel3D {
         this.manager.Getmanager().removeControl(this.panel3D);
         this.panel3D.dispose();
         this.cubeBase.setText(txt);
-        this.panel3D = addNew3DPanell(this, this.cubeBase.getPos(), txt, this.manager.Getmanager(), this.manager.GetScene());
+        this.panel3D = addNew3DPanell(this, this.cubeBase.getPosition(), txt, this.manager.Getmanager(), this.manager.GetScene());
         UISingleton.getInstance().updateDisplay();
     }
 
