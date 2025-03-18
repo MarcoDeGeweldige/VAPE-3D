@@ -1,12 +1,12 @@
 
 
 import { GUI3DManager } from "@babylonjs/gui";
-import { TestContext } from "./TestContext";
+import { Interaction3Dpanel } from "./TestContext";
 
 
 export class ExpressionUiManeger {
 
-    openTab!: TestContext;
+    openTab!: Interaction3Dpanel;
     manager: GUI3DManager;
 
     constructor(manager: GUI3DManager) {
@@ -22,7 +22,7 @@ export class ExpressionUiManeger {
         return this.manager.scene;
     }
 
-    OpenTab(cpanel: TestContext): void {
+    OpenTab(cpanel: Interaction3Dpanel): void {
 
 
         if (this.openTab == null) {

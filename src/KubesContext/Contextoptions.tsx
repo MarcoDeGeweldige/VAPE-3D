@@ -1,38 +1,62 @@
 
 import { Color3, Mesh, MeshBuilder, Scene, TransformNode, Vector3 } from "@babylonjs/core";
 import { Button3D, GUI3DManager, StackPanel3D, TextBlock } from "@babylonjs/gui";
-import { ContextPanel } from "./ContextPanel";
+import { DisplayPanel3D } from "./ContextPanel";
 import { GradientMaterial } from "@babylonjs/materials";
 import { Direction, DirectionVectors } from "./VectorDirections";
 
 
 
-export const addPanell = (conPanel: ContextPanel, pos: Vector3, txt: string, manager: GUI3DManager, scene: Scene) => {
-  const aPanel = new StackPanel3D();
-  aPanel.margin = 0.02;
-  manager.addControl(aPanel);
-  const transformNode = new TransformNode("panelTransform", scene);
-  transformNode.position = new Vector3(pos.x, pos.y, pos.z - 2);
+export const addNew3DPanell = (conPanel: DisplayPanel3D, pos: Vector3, description: string, manager: GUI3DManager, scene: Scene) => {
+  const newPanel = new StackPanel3D();
+  newPanel.margin = 0.02;
+  manager.addControl(newPanel);
+
+  
+  // const button = new Button3D(); // Unique name for each button
+  // button.position = new Vector3(0, 1, 0); // Spread buttons out along the x-axis
+  const transformNode = createLocalTransformNode();
 
   // Link the panel to the transform node
-  aPanel.linkToTransformNode(transformNode);
+  newPanel.linkToTransformNode(transformNode);
 
-  const button = new Button3D("nikk"); // Unique name for each button
-  button.position = new Vector3(0, 1, 0); // Spread buttons out along the x-axis
-  button.linkToTransformNode(transformNode);
-  button.onPointerUpObservable.add(() => {
-    // Call the `conext menu event` method
-    conPanel.onSelect();
+  // const button = new Button3D(); // Unique name for each button
+  // button.position = new Vector3(0, 1, 0); // Spread buttons out along the x-axis
+  // button.linkToTransformNode(transformNode);
 
-  });
+  // button.onPointerUpObservable.add(() => {
+  //   conPanel.onSelect();
 
-  button.content = GetText(txt); // Assign text content to the button
+  // });
+  // button.content = GetText(description); // Assign text content to the button
 
-  aPanel.addControl(button);
-  return aPanel;
+  //newPanel.addControl(button);
+  newPanel.addControl(createLocalButton3D(transformNode, description));
+  return newPanel;
 
+
+  function createLocalTransformNode() {
+    const transformNode = new TransformNode("panelTransform", scene);
+    transformNode.position = new Vector3(pos.x, pos.y, pos.z - 2);
+    return transformNode;
+  }
+
+  function createLocalButton3D(transformNode : TransformNode, description : string) : Button3D{
+    const button = new Button3D(); // Unique name for each button
+    button.position = new Vector3(0, 1, 0); // Spread buttons out along the x-axis
+    button.linkToTransformNode(transformNode);
+    button.onPointerUpObservable.add(() => {
+      conPanel.onSelect();
+  
+    });
+    button.content = GetText(description); // Assign text content to the button
+
+
+    return button;
+
+
+  }
 };
-
 
 
 export const GetText = (txt: string): TextBlock => {

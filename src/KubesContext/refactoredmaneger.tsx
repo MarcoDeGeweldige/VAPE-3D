@@ -15,6 +15,7 @@ export class InputManager {
         this.inputBox = createInputBox();
         this.expressiondis = new ExpresionDisplay();
         this.advancedUI.addControl(this.expressiondis.getExpressionBox());
+        this.inputBox.zIndex = 100;
         this.advancedUI.addControl(this.inputBox);
     }
 
@@ -38,6 +39,7 @@ export class InputManager {
         input.onBeforeKeyAddObservable.add((event) => {
             button.content = GetText(event.text);
         });
+        
 
         const eContainer =
 
@@ -86,6 +88,7 @@ export function createInputBox(): InputText {
     input.text = "";
     input.color = "white";
     input.background = "green";
+    
     return input;
 }
 
@@ -116,18 +119,15 @@ export class NewManager {
 export class ExpresionDisplay {
 
     expressionbox: TextBlock;
-    extrabox?: TextBlock;
     constructor() {
 
         const e = new TextBlock();
-
         e.width = "70%";
         e.height = "20%";
         e.text = "";
         e.color = "white";
         e.resizeToFit = false;
         e.verticalAlignment = 1;
-
         this.expressionbox = e;
     }
 
@@ -135,36 +135,8 @@ export class ExpresionDisplay {
 
         this.expressionbox.text = exp;
     }
-
-    addExtraBoxO() {
-
-        const e = new TextBlock();
-
-        e.width = "70%";
-        e.height = "20%";
-        e.text = "exra box";
-        e.color = "white";
-        e.resizeToFit = false;
-        e.verticalAlignment = 1;
-        this.extrabox = e;
-        return e;
-
-
-    }
-
     getExpressionBox() {
         return this.expressionbox;
     }
-    getExtraBoxO(): TextBlock {
-
-        if (this.extrabox) {
-            return this.extrabox;
-        }
-        else {
-
-            return this.addExtraBoxO();
-        }
-    }
-
 }
 

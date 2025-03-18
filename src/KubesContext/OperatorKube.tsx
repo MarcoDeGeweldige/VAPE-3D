@@ -2,10 +2,10 @@
 import { Mesh, Vector3, MeshBuilder, StandardMaterial, Color3, Material } from "@babylonjs/core";
 import { TextBlock, StackPanel3D } from "@babylonjs/gui";
 
-import { ConnectPipec, GetText, addPanell } from "./Contextoptions";
+import { ConnectPipec, GetText, addNew3DPanell } from "./Contextoptions";
 import { calculateEndPosition, Cube, CubeBase, CubeSlots, getFreeDirection, scanDirections } from "./Kubes";
 
-import { ContextPanel, CubeType } from "./ContextPanel";
+import { DisplayPanel3D, CubeType } from "./ContextPanel";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { UISingleton } from "./UIFunctions";
 import { Direction, DirectionVectors } from "./VectorDirections";
@@ -19,7 +19,7 @@ export class OperatorCube implements CubeBase {
   _txt: string = "";
   text2: TextBlock;
   panel: StackPanel3D;
-  conPanel: ContextPanel;
+  conPanel: DisplayPanel3D;
   inputA: Cube;
   inputB: Cube;
   OutputCube: Cube;
@@ -43,9 +43,9 @@ export class OperatorCube implements CubeBase {
       this.pipes.push(ConnectPipec(this.getPos(), outputCube.getPos(), new Vector3(1, 1, 1), dir));
     }
     this.slots = new CubeSlots(pos, this.getModel());
-    this.conPanel = new ContextPanel(manager, pos, this, desc);
-    this.panel = addPanell(this.conPanel, pos, desc, manager.Getmanager(), manager.GetScene());
-    this.updateColorI();
+    this.conPanel = new DisplayPanel3D(manager, pos, this, desc);
+    this.panel = addNew3DPanell(this.conPanel, pos, desc, manager.Getmanager(), manager.GetScene());
+    this.updateColor();
     this.inputA = this.createOperandKubes(manager, this._pos, Direction.Left, "AA", CubeType.Operand);
     this.inputB = this.createOperandKubes(manager, this._pos, Direction.Down, "BB", CubeType.Operand);
     this.OutputCube = this.setOutPutCube(dir, outputCube);
@@ -94,7 +94,7 @@ export class OperatorCube implements CubeBase {
   getSlots(): CubeSlots {
     return this.slots;
   }
-  getCType(): CubeType {
+  getCubeType(): CubeType {
     return this.cType;
   }
 
@@ -167,11 +167,6 @@ export class OperatorCube implements CubeBase {
 
   }
 
-  updateColorI() {
-    const mat = new StandardMaterial("red", this.manager.GetScene());
-    mat.diffuseColor = new Color3(255, 0, 0);
-    this.model.material = mat;
-  }
 
   getText(): string {
     console.log(this._txt);
@@ -183,8 +178,17 @@ export class OperatorCube implements CubeBase {
       return "mo input a";
     }
   }
-  updateColor(mat: Material) {
-    this.model.material = mat;
+  updateColor(mat?: Material) {
+
+    if(mat){
+
+      this.model.material = mat;
+    }
+    else{
+      const mat = new StandardMaterial("red", this.manager.GetScene());
+      mat.diffuseColor = new Color3(255, 0, 0);
+      this.model.material = mat;
+    }
   }
 }
 
