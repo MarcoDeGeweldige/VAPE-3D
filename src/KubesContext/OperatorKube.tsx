@@ -8,7 +8,7 @@ import { calculateEndPosition, Cube, CubeBase, CubeSlots, getFreeDirection, scan
 import { DisplayPanel3D, CubeType } from "./ContextPanel";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { UISingleton } from "./UIFunctions";
-import { Direction, DirectionVectors } from "./VectorDirections";
+import { Direction } from "./VectorDirections";
 
 const CubeSize = { width: 2, height: 1.5, depth: 3 };
 
@@ -64,7 +64,7 @@ export class OperatorCube implements CubeBase {
       return false;
     }
   }
-  assignEx(output: CubeBase, dir: Direction): void {
+  assignExpression(output: CubeBase, dir: Direction): void {
     console.log("don't call this");
   }
   setText(txt: string): void {
@@ -111,7 +111,6 @@ export class OperatorCube implements CubeBase {
 
   //delete expression if there is no subexpression
   deleteExpression(): void {
-
     if (!this.hasSubOperator()) {
       this.inputA.deleteMesh();
       this.inputB.deleteMesh();
@@ -121,6 +120,7 @@ export class OperatorCube implements CubeBase {
     }
   }
 
+  //removed the assigned suboperator cube
   clearParent() {
     if (this.parent) {
       this.parent.SubOperatorCube = undefined;
@@ -141,8 +141,8 @@ export class OperatorCube implements CubeBase {
     }
   }
 
+  
   deleteMesh() {
-
     this.model.isVisible = false;
     this.panel.dispose();
     this.displayPanel.deletePanels();
@@ -155,25 +155,23 @@ export class OperatorCube implements CubeBase {
 
 
   getText(): string {
-    console.log(this._txt);
     if (this.inputA) {
       return "(" + this.inputA.getText() + " " + this._txt + " " + this.inputB.getText() + ")";
-
     }
     else {
-      return "mo input a";
+      return "no input a";
     }
   }
-  updateColor(mat?: Material) {
+  updateColor(material?: Material) {
 
-    if(mat){
+    if(material){
 
-      this.model.material = mat;
+      this.model.material = material;
     }
     else{
-      const mat = new StandardMaterial("red", this.manager.GetScene());
-      mat.diffuseColor = new Color3(255, 0, 0);
-      this.model.material = mat;
+      const material = new StandardMaterial("red", this.manager.GetScene());
+      material.diffuseColor = new Color3(255, 0, 0);
+      this.model.material = material;
     }
   }
 }

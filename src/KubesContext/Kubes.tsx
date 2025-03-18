@@ -1,5 +1,5 @@
 
-import { Mesh, Vector3, MeshBuilder, Material, StandardMaterial, Color3, Ray, RayHelper } from "@babylonjs/core";
+import { Mesh, Vector3, MeshBuilder, Material, StandardMaterial, Color3, Ray } from "@babylonjs/core";
 import { TextBlock, StackPanel3D } from "@babylonjs/gui";
 import { addNew3DPanell, SetTextBlock } from "./Contextoptions";
 import { DisplayPanel3D, CubeType } from "./ContextPanel";
@@ -22,7 +22,7 @@ export interface CubeBase {
   getModel(): Mesh;
   getSlots(): CubeSlots;
   getCubeType(): CubeType;
-  assignEx(output: CubeBase, dir: Direction): void;
+  assignExpression(output: CubeBase, dir: Direction): void;
   hasSubOperator(): boolean;
   setParent(kubes: Cube): void;
 }
@@ -33,28 +33,28 @@ export class Cube implements CubeBase {
   model: Mesh;
   _pos: Vector3;
   _txt: string;
-  text2: TextBlock;
+  textBlock: TextBlock;
   panel: StackPanel3D;
-  conPanel: DisplayPanel3D;
-  cType: CubeType;
+  displayPanel: DisplayPanel3D;
+  cubeType: CubeType;
   isOutPutCube = false;
   OperatorCube: OperatorCube;
   SubOperatorCube?: OperatorCube;
   parent?: Cube;
   slots: CubeSlots;
 
-  constructor(manager: ExpressionUiManeger, pos: Vector3, desc: string, cubeType: CubeType, operator: OperatorCube, dir: Direction) {
+  constructor(manager: ExpressionUiManeger, position: Vector3, description: string, cubeType: CubeType, operator: OperatorCube, dir: Direction) {
     this.manager = manager;
-    this.cType = cubeType;
+    this.cubeType = cubeType;
     this.OperatorCube = operator;
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
-    this._txt = desc;
-    this.text2 = SetTextBlock(desc);
-    this.slots = new CubeSlots(pos, this.getModel());
-    this._pos = pos;
-    this.conPanel = new DisplayPanel3D(manager, pos, this, desc);
-    this.panel = addNew3DPanell(this.conPanel, pos, desc, manager.Getmanager(), manager.GetScene());
-    this.model.position = pos;
+    this._txt = description;
+    this.textBlock = SetTextBlock(description);
+    this.slots = new CubeSlots(position, this.getModel());
+    this._pos = position;
+    this.displayPanel = new DisplayPanel3D(manager, position, this, description);
+    this.panel = addNew3DPanell(this.displayPanel, position, description, manager.Getmanager(), manager.GetScene());
+    this.model.position = position;
     this.updateColor();
   }
   setParent(kubes: Cube): void {
@@ -66,14 +66,14 @@ export class Cube implements CubeBase {
   getModel(): Mesh {
     return this.model;
   }
-  assignEx(output: CubeBase, dir: Direction): void {
+  assignExpression(output: CubeBase, dir: Direction): void {
     if (output instanceof Cube) {
       this.assignSubExpression(output, dir);
     }
 
   }
   getCubeType(): CubeType {
-    return this.cType;
+    return this.cubeType;
   }
   getSlots(): CubeSlots {
     return this.slots;
@@ -88,12 +88,12 @@ export class Cube implements CubeBase {
   setAsOutputKube(subOperator: OperatorCube) {
 
     this.SubOperatorCube = subOperator;
-
     this.isOutPutCube = true;
-    this._txt = "res";
-    this.text2 = SetTextBlock("res");
-    this.conPanel.updateText("res");
-    this.conPanel.setVisibility(false);
+    const resultDescription = "result";
+    this._txt = resultDescription;
+    this.textBlock = SetTextBlock(resultDescription);
+    this.displayPanel.updateText(resultDescription);
+    this.displayPanel.setVisibility(false);
     this.panel.isVisible = false;
   }
 
@@ -102,7 +102,6 @@ export class Cube implements CubeBase {
   }
 
   hasSubOperator(): boolean {
-
     if (this.SubOperatorCube) {
       return true;
     }
@@ -116,7 +115,7 @@ export class Cube implements CubeBase {
 
     this.model.isVisible = false;
     this.panel.dispose();
-    this.conPanel.deletePanels();
+    this.displayPanel.deletePanels();
     this.model.dispose();
   }
 
@@ -126,14 +125,14 @@ export class Cube implements CubeBase {
       this.model.material = mat;
     }
     else{
-      if (this.cType == CubeType.Operator) {
+      if (this.cubeType === CubeType.Operator) {
 
         const mat = new StandardMaterial("red", this.manager.GetScene());
         mat.diffuseColor = new Color3(255, 0, 0);
         this.model.material = mat;
       }
       else {
-        const mat = new StandardMaterial("red", this.manager.GetScene());
+        const mat = new StandardMaterial("green", this.manager.GetScene());
         mat.diffuseColor = new Color3(0, 255, 0);
         this.model.material = mat;
       }
@@ -161,10 +160,7 @@ export class CubeSlots {
     this.freeSlots = scanDirections(model, false);
     this.cubePos = pos;
   }
-
-
   getAvailableSidesN(): Direction[] {
-
     this.freeSlots = scanDirections(this.model);
     return this.freeSlots;
   }
@@ -172,19 +168,15 @@ export class CubeSlots {
 }
 
 
-function vecToLocal(vector: Vector3, mesh: Mesh) {
-  var m = mesh.getWorldMatrix();
-  var v = Vector3.TransformCoordinates(vector, m);
-  return v;
-}
+// function vecToLocal(vector: Vector3, mesh: Mesh): Vector3 {
+//   return Vector3.TransformCoordinates(vector, mesh.getWorldMatrix());
+// }
 
 export function calculateEndPosition(pos: Vector3, dir: Direction): Vector3 {
   return pos.add(DirectionVectors[dir].scale(4));
-
 }
 
 export function getFreeDirection(freeDirs: Direction[]) {
-
   let di = freeDirs.at(0);
 
   if (di) {
@@ -203,20 +195,17 @@ export function scanDirections(model: Mesh, showLines: boolean = false): Directi
   let anything: Direction[] = [];
   Object.values(Direction).forEach((dir) => {
     const vector = DirectionVectors[dir];
-    const richting = vecToLocal(vector, model);
-    var direction = richting.subtract(origin);
-    direction = Vector3.Normalize(direction);
+    //const richting = vecToLocal(vector, model);
+    //var direction = richting.subtract(origin);
+    //direction = Vector3.Normalize(direction);
     var length = 4;
     //was direction
     var ray = new Ray(origin, vector, length);
     const sce = UISingleton.getInstance().getScene();
     if (sce) {
       var hit = sce.pickWithRay(ray);
-
       if (hit) {
         if (hit.pickedMesh && hit.pickedMesh !== model) {
-          //rhel.show(sce);
-
           console.log(vector + "n " + dir + " unable to be used");
         }
         else {
@@ -231,7 +220,6 @@ export function scanDirections(model: Mesh, showLines: boolean = false): Directi
 
   model.isPickable = true;
   return anything;
-
 }
 
 

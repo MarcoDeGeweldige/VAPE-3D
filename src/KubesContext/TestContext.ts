@@ -12,20 +12,20 @@ export class Interaction3Dpanel {
     hasExpression: boolean = false;
     isVisible: boolean = false;
     panel: StackPanel3D;
-    parent: DisplayPanel3D;
+    displayPanel3D: DisplayPanel3D;
     constructor(
         manager: ExpressionUiManeger,
-        pos: Vector3,
-        parent: DisplayPanel3D,
+        position: Vector3,
+        displayPanel3D: DisplayPanel3D,
         updateText: (txt: string) => void
     ) {
-        this.parent = parent;
+        this.displayPanel3D = displayPanel3D;
         this.panel = new StackPanel3D();
         const inputButton = new Button3D();
         inputButton.content = SetTextBlock("insert var");
         const updateTextButton = new Button3D("updatetext");
         updateTextButton.content = SetTextBlock("Update");
-        this.setupUI(manager, pos, updateText, inputButton, updateTextButton);
+        this.setupUI(manager, position, updateText, inputButton, updateTextButton);
     }
 
     private setupUI(
@@ -49,13 +49,13 @@ export class Interaction3Dpanel {
     }
 
     private setupAdvancedButtons(manager: ExpressionUiManeger, updateText: (txt: string) => void, inputButton: Button3D) {
-        if (this.parent.cubeBase.getCubeType() === CubeType.Operand) {
+        if (this.displayPanel3D.cubeBase.getCubeType() === CubeType.Operand) {
 
             const addExpressionButton = new Button3D();
             addExpressionButton.content = SetTextBlock("add exp");
             addExpressionButton.onPointerUpObservable.add(() => {
 
-                UISingleton.getInstance().setPanelFunctions(this.parent.cubeBase, manager, updateText);
+                UISingleton.getInstance().setPanelFunctions(this.displayPanel3D.cubeBase, manager, updateText);
                 this.setVisibility(false);
             });
             this.panel.addControl(addExpressionButton);
@@ -65,7 +65,7 @@ export class Interaction3Dpanel {
             OperatorEditButton.content = SetTextBlock("edit operator");
 
             OperatorEditButton.onPointerUpObservable.add(() => {
-                UISingleton.getInstance().setOperFunctions(this.parent.cubeBase, this.parent.updateText.bind(this.parent), this.setVisibility.bind(this));
+                UISingleton.getInstance().setOperFunctions(this.displayPanel3D.cubeBase, this.displayPanel3D.updateText.bind(this.displayPanel3D), this.setVisibility.bind(this));
                 this.setVisibility(false);
             });
             this.panel.addControl(OperatorEditButton);
@@ -84,7 +84,7 @@ export class Interaction3Dpanel {
     }
 
     deletePanel() {
-        this.parent.manager.Getmanager().removeControl(this.panel);
+        this.displayPanel3D.manager.Getmanager().removeControl(this.panel);
         this.panel.dispose();
     }
 

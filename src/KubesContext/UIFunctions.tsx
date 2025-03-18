@@ -1,13 +1,13 @@
 
 
 
-import { AdvancedDynamicTexture, Button, Container, Control, Line, Rectangle, StackPanel, TextBlock } from "@babylonjs/gui";
-import { ExpresionDisplay, NewManager } from "./refactoredmaneger";
-import { Cube, CubeBase } from "./Kubes";
+import { AdvancedDynamicTexture, Button, Container, Control, Rectangle, StackPanel, TextBlock } from "@babylonjs/gui";
+import { ExpresionDisplay } from "./refactoredmaneger";
+import { CubeBase } from "./Kubes";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { KeyboardEventTypes, Scene } from "@babylonjs/core";
 import { OperatorCube } from "./OperatorKube";
-import { Direction, DirectionVectors } from "./VectorDirections";
+import { Direction } from "./VectorDirections";
 import { SceneManager } from "../Helpers/SceneManager";
 import WorldInformation from "../Helpers/WorldInformation";
 import { VariableDataContainer } from "../Objects/DataContainers";
@@ -45,7 +45,7 @@ export class UISingleton {
         if (sce) {
             sce.onKeyboardObservable.add((keyboardEvent) => {
 
-                if (keyboardEvent.type == KeyboardEventTypes.KEYDOWN) {
+                if (keyboardEvent.type === KeyboardEventTypes.KEYDOWN) {
                     if (keyboardEvent.event.ctrlKey) {
 
                         this.paneldis.updateVis(!this.paneldis.isVisible);
@@ -53,7 +53,7 @@ export class UISingleton {
         
                     }
                 }
-                if (keyboardEvent.type == KeyboardEventTypes.KEYDOWN) {
+                if (keyboardEvent.type === KeyboardEventTypes.KEYDOWN) {
                     if (keyboardEvent.event.altKey) {
                         BuilderSingleton.getInstance().switchToStart(UISingleton.getInstance().getExText());
                     }
@@ -174,7 +174,7 @@ class operatorBtns {
         }
         else {
 
-            if (this.selectedKube == kubes) {
+            if (this.selectedKube === kubes) {
                 this.updateVis(true);
             }
             else {
@@ -335,7 +335,7 @@ class Dirpanels2d {
         if (this.selectedKube) {
 
 
-            if (this.selectedKube != kubes) {
+            if (this.selectedKube !== kubes) {
                 this.clearpanels();
 
                 this.selectedKube = kubes;
@@ -352,11 +352,10 @@ class Dirpanels2d {
         button.width = "80%";
         button.height = "40px";
         button.background = "green";
-
         let vinfo = SceneManager.CurrentVapeScene()?.worldInformation;
         if (vinfo instanceof WorldInformation) {
             vinfo.getDataContainerArray().forEach(elemt => {
-                if (elemt.type == 'variable') {
+                if (elemt.type === 'variable') {
                     const vUnit = elemt as VariableDataContainer;
                     console.log(vUnit.value + " val");
                     console.log("added variable" + vUnit.value.toString() + vUnit.name + vUnit.variableType);
@@ -422,7 +421,7 @@ class Dirpanels2d {
             addBtn.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
 
             addBtn.onPointerUpObservable.add(() => {
-                kubes.assignEx(kubes, element);
+                kubes.assignExpression(kubes, element);
                 this.updateVis(false);
                 this.clearpanels();
             });

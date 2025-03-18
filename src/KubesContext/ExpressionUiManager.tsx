@@ -32,7 +32,7 @@ export class ExpressionUiManeger {
 
         else {
 
-            if (this.openTab == cpanel) {
+            if (this.openTab === cpanel) {
 
                 this.openTab?.setVisibility(!this.openTab.isVisible);
 
