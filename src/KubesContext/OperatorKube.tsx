@@ -2,7 +2,7 @@
 import { Mesh, Vector3, MeshBuilder, StandardMaterial, Color3, Material } from "@babylonjs/core";
 import { TextBlock, StackPanel3D } from "@babylonjs/gui";
 
-import { ConnectPipec, GetText, addNew3DPanell } from "./Contextoptions";
+import { CreatePipe, SetTextBlock, addNew3DPanell } from "./Contextoptions";
 import { calculateEndPosition, Cube, CubeBase, CubeSlots, getFreeDirection, scanDirections } from "./Kubes";
 
 import { DisplayPanel3D, CubeType } from "./ContextPanel";
@@ -33,14 +33,14 @@ export class OperatorCube implements CubeBase {
     this._pos = pos;
     this.manager = manager;
     this._txt = desc;
-    this.text2 = GetText(desc);
+    this.text2 = SetTextBlock(desc);
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
     this.model.position = pos;
     this.cType = CubeType.Operator;
 
     if (outputCube) {
       outputCube.setAsOutputKube(this);
-      this.pipes.push(ConnectPipec(this.getPos(), outputCube.getPos(), new Vector3(1, 1, 1), dir));
+      this.pipes.push(CreatePipe(this.getPos(), outputCube.getPos(), dir));
     }
     this.slots = new CubeSlots(pos, this.getModel());
     this.conPanel = new DisplayPanel3D(manager, pos, this, desc);
@@ -140,7 +140,7 @@ export class OperatorCube implements CubeBase {
       console.log("direction is safe " + dir)
       let directionalPos = calculateEndPosition(pos, dir);
       const newCube = new Cube(manager, directionalPos, desc, Ctype, this, dir);
-      this.pipes.push(ConnectPipec(this.getPos(), newCube._pos, new Vector3(1, 1, 1), dir));
+      this.pipes.push(CreatePipe(this.getPos(), newCube._pos, dir));
       return newCube;
 
     }
@@ -149,7 +149,7 @@ export class OperatorCube implements CubeBase {
       let nextdir = getFreeDirection(freedirs);
       let directionalPos = calculateEndPosition(pos, nextdir);
       const newCube = new Cube(manager, directionalPos, desc, Ctype, this, nextdir);
-      this.pipes.push(ConnectPipec(this.getPos(), newCube._pos, new Vector3(1, 1, 1), nextdir));
+      this.pipes.push(CreatePipe(this.getPos(), newCube._pos, nextdir));
       return newCube;
     }
   }

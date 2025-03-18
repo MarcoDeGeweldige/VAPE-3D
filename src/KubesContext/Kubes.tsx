@@ -1,7 +1,7 @@
 
 import { Mesh, Vector3, MeshBuilder, Material, StandardMaterial, Color3, Ray, RayHelper } from "@babylonjs/core";
 import { TextBlock, StackPanel3D } from "@babylonjs/gui";
-import { addNew3DPanell, GetText } from "./Contextoptions";
+import { addNew3DPanell, SetTextBlock } from "./Contextoptions";
 import { DisplayPanel3D, CubeType } from "./ContextPanel";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { OperatorCube } from "./OperatorKube";
@@ -49,7 +49,7 @@ export class Cube implements CubeBase {
     this.OperatorCube = operator;
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
     this._txt = desc;
-    this.text2 = GetText(desc);
+    this.text2 = SetTextBlock(desc);
     this.slots = new CubeSlots(pos, this.getModel());
     this._pos = pos;
     this.conPanel = new DisplayPanel3D(manager, pos, this, desc);
@@ -91,7 +91,7 @@ export class Cube implements CubeBase {
 
     this.isOutPutCube = true;
     this._txt = "res";
-    this.text2 = GetText("res");
+    this.text2 = SetTextBlock("res");
     this.conPanel.updateText("res");
     this.conPanel.setVisibility(false);
     this.panel.isVisible = false;

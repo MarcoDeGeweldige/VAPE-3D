@@ -1,7 +1,7 @@
 import { Vector3, TransformNode } from "@babylonjs/core";
 import { StackPanel3D, Button3D } from "@babylonjs/gui";
 import { DisplayPanel3D, CubeType } from "./ContextPanel";
-import { GetText } from "./Contextoptions";
+import { SetTextBlock } from "./Contextoptions";
 import { FocusCamera } from "./ExpressionBuilder";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { UISingleton } from "./UIFunctions";
@@ -22,9 +22,9 @@ export class Interaction3Dpanel {
         this.parent = parent;
         this.panel = new StackPanel3D();
         const inputButton = new Button3D();
-        inputButton.content = GetText("insert var");
+        inputButton.content = SetTextBlock("insert var");
         const updateTextButton = new Button3D("updatetext");
-        updateTextButton.content = GetText("Update");
+        updateTextButton.content = SetTextBlock("Update");
         this.setupUI(manager, pos, updateText, inputButton, updateTextButton);
     }
 
@@ -52,7 +52,7 @@ export class Interaction3Dpanel {
         if (this.parent.parent.getCubeType() === CubeType.Operand) {
 
             const addExpressionButton = new Button3D();
-            addExpressionButton.content = GetText("add exp");
+            addExpressionButton.content = SetTextBlock("add exp");
             addExpressionButton.onPointerUpObservable.add(() => {
 
                 UISingleton.getInstance().setPanelFunctions(this.parent.parent, manager, updateText);
@@ -62,7 +62,7 @@ export class Interaction3Dpanel {
             this.panel.addControl(inputButton);
         } else {
             const OperatorEditButton = new Button3D();
-            OperatorEditButton.content = GetText("edit operator");
+            OperatorEditButton.content = SetTextBlock("edit operator");
 
             OperatorEditButton.onPointerUpObservable.add(() => {
                 UISingleton.getInstance().setOperFunctions(this.parent.parent, this.parent.updateText.bind(this.parent), this.setVisibility.bind(this));

@@ -1,6 +1,6 @@
 
 import { AdvancedDynamicTexture, Button3D, InputText, TextBlock } from "@babylonjs/gui";
-import { GetText } from "./Contextoptions";
+import { SetTextBlock } from "./Contextoptions";
 import { UISingleton } from "./UIFunctions";
 
 export class InputManager {
@@ -37,7 +37,7 @@ export class InputManager {
     // Attach listeners for keyboard input
     static attachInputListeners(input: InputText, button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
         input.onBeforeKeyAddObservable.add((event) => {
-            button.content = GetText(event.text);
+            button.content = SetTextBlock(event.text);
         });
         
 
@@ -59,7 +59,7 @@ export class InputManager {
         input.onKeyboardEventProcessedObservable.add((keyboardEvent) => {
             if (keyboardEvent.key === "Enter") {
                 console.log("Enter key pressed. Current input:", input.text);
-                button.content = GetText(input.text); // Update button content
+                button.content = SetTextBlock(input.text); // Update button content
                 button.isVisible = false; // Example action: Hide button
                 uptxt(input.text);
                 input.isVisible = false;
