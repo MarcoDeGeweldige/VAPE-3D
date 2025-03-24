@@ -109,11 +109,17 @@ export class OperatorCube implements CubeBase {
 
   }
 
+  resetOutputCube(){
+
+    this.OutputCube.resetOutputCube();
+  }
+
   //delete expression if there is no subexpression
   deleteExpression(): void {
     if (!this.hasSubOperator()) {
       this.inputA.deleteMesh();
       this.inputB.deleteMesh();
+      this.resetOutputCube();
       this.clearParent();
       this.deleteMesh();
       UISingleton.getInstance().updateDisplay();

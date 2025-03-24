@@ -25,6 +25,7 @@ export const addNew3DPanell = (displayPanel: DisplayPanel3D, pos: Vector3, descr
 
   function createLocalButton3D(transformNode : TransformNode, description : string) : Button3D{
     const button = new Button3D(); // Unique name for each button
+    
     button.position = new Vector3(0, 1, 0); // Spread buttons out along the x-axis
     button.linkToTransformNode(transformNode);
     button.onPointerUpObservable.add(() => {

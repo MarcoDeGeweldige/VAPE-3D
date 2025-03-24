@@ -9,6 +9,8 @@ import { UISingleton } from "./UIFunctions";
 import { Direction, DirectionVectors } from "./VectorDirections";
 
 
+
+//https://zzzcode.ai/code-review?id=89a767fb-b79f-4ff9-8e77-001ec3274038
 const CubeSize = { width: 2, height: 1.5, depth: 3 };
 
 export interface CubeBase {
@@ -33,6 +35,7 @@ export class Cube implements CubeBase {
   model: Mesh;
   _pos: Vector3;
   _txt: string;
+  initialDescription : string;
   textBlock: TextBlock;
   panel: StackPanel3D;
   displayPanel: DisplayPanel3D;
@@ -49,6 +52,7 @@ export class Cube implements CubeBase {
     this.OperatorCube = operator;
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
     this._txt = description;
+    this.initialDescription = description;
     this.textBlock = SetTextBlock(description);
     this.slots = new CubeSlots(position, this.getModel());
     this._pos = position;
@@ -61,6 +65,7 @@ export class Cube implements CubeBase {
     this.parent = kubes;
   }
   deleteExpression(): void {
+    console.log("delete expresion called");
     this.OperatorCube.deleteExpression();
   }
   getModel(): Mesh {
@@ -95,6 +100,20 @@ export class Cube implements CubeBase {
     this.displayPanel.updateText(resultDescription);
     this.displayPanel.setVisibility(false);
     this.panel.isVisible = false;
+    console.log("this is an output cube");
+  }
+
+  resetOutputCube(){
+
+    this.SubOperatorCube = undefined;
+
+    this.isOutPutCube = false;
+    this._txt = this.initialDescription;
+    this.textBlock = SetTextBlock(this.initialDescription);
+    this.displayPanel.updateText(this.initialDescription);
+    this.displayPanel.setVisibility(false);
+
+
   }
 
   assignSubExpression(kubes: Cube, dir: Direction) {

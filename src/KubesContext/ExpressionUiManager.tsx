@@ -1,7 +1,8 @@
 
 
-import { GUI3DManager } from "@babylonjs/gui";
+import { Button3D, GUI3DManager, StackPanel3D, TextBlock } from "@babylonjs/gui";
 import { Interaction3Dpanel } from "./TestContext";
+import { KeyboardEventTypes, Scene } from "@babylonjs/core";
 
 
 export class ExpressionUiManeger {
@@ -11,6 +12,7 @@ export class ExpressionUiManeger {
 
     constructor(manager: GUI3DManager) {
         this.manager = manager;
+
     }
 
     Getmanager() {
@@ -48,4 +50,28 @@ export class ExpressionUiManeger {
 
     }
 
+}
+
+
+
+
+
+export const setupCameraControls = function (sce: Scene) {
+
+    sce.onKeyboardObservable.add((keyboardEvent) => {
+
+        if (keyboardEvent.type === KeyboardEventTypes.KEYDOWN) {
+
+            console.log("keycode is =" + keyboardEvent.event.key)
+            //ArrowLeft
+            //ArrowRight
+            //ArrowUp
+            //ArrowDown
+
+            if(keyboardEvent.event.key === "wat"){
+
+            }
+
+        }
+    })
 }
