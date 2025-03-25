@@ -22,10 +22,6 @@ export class UISingleton {
     private rootOperatorCube?: OperatorCube;
     public resulte: string = "empty";
 
-    //kijk naar chained operation 
-    //https://mathjs.org/examples/basic_usage.js.html
-
-
 
     private constructor(scene?: Scene) {
 
