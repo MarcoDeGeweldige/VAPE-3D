@@ -12,7 +12,7 @@ import { Direction } from "./VectorDirections";
 export class Dirpanels2d {
     private panel: Rectangle;
     private cont: Container;
-    private btns: TextBlock;
+    //private btns: TextBlock;
 
     selectedKube?: CubeBase;
 
@@ -25,14 +25,14 @@ export class Dirpanels2d {
         this.panel = new Rectangle();
         this.cont = new Container();
         this.cont.adaptHeightToChildren = true;
-        const e = new TextBlock();
-        e.width = "70%";
-        e.height = "20%";
-        e.text = "panel display panel";
-        e.color = "white";
-        e.resizeToFit = false;
-        e.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER;
-        this.btns = e;
+        // const e = new TextBlock();
+        // e.width = "70%";
+        // e.height = "20%";
+        // e.text = "panel display panel";
+        // e.color = "white";
+        // e.resizeToFit = false;
+        // e.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER;
+        // this.btns = e;
     }
 
     getPanel(): Rectangle {

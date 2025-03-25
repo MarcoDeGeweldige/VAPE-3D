@@ -56,6 +56,7 @@ export class UISingleton {
 
                         this.paneldis.updateVisibility(!this.paneldis.isVisible);
                         this.oper.updateVis(false);
+                        //
         
                     }
                 }
