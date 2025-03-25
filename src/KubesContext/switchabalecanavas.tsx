@@ -1,7 +1,7 @@
 
 
 import BabylonSce from "./ExpressionCanvas";
-import { createRoot, Root } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 
 
 export class BuilderSingleton {
@@ -23,7 +23,6 @@ export class BuilderSingleton {
     evalGuiDiv.style.left = "0px";
     evalGuiDiv.style.width = "100%";
     evalGuiDiv.style.height = "100%";
-    // evalGuiDiv.style.visibility = "invisible";
     return evalGuiDiv;
   }
 
@@ -55,6 +54,7 @@ export class BuilderSingleton {
   }
 
 
+  //return back to the vape scene
   public switchToStart(res: string) {
 
     this.expressionResult = res;

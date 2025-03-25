@@ -43,7 +43,7 @@ export class Dirpanels2d {
         return this.cont;
     }
 
-    updateVis(v: boolean) {
+    updateVisibility(v: boolean) {
         this.isVisible = v;
 
         this.cont.isVisible = v;
@@ -77,7 +77,7 @@ export class Dirpanels2d {
                 this.setUpControls(this.selectedKube, manager, updateText);
             }
             else {
-                this.updateVis(true);
+                this.updateVisibility(true);
                 this.setUpControls(this.selectedKube, manager, updateText);
             }
         }
@@ -98,7 +98,7 @@ export class Dirpanels2d {
                     addBtn.onPointerClickObservable.add(() => {
 
                         updateText(vUnit.name);
-                        this.updateVis(false);
+                        this.updateVisibility(false);
                     })
                     this.cont.addControl(addBtn);
                     
@@ -133,18 +133,16 @@ export class Dirpanels2d {
         let yOffset = 0;
 
         if (!kubes.hasSubOperator()) {
-            this.setupdelbtn(p, kubes);
+            this.setupDeletebtn(p, kubes);
             this.setupDirbtns(freeslots, yOffset, kubes, p);
         }
 
-        this.updateVis(true);
+        this.updateVisibility(true);
         this.setFunction(updateText);
 
     }
 
-
-
-    private setupDirbtns(freeslots: Direction[], yOffset: number, kubes: CubeBase, p: StackPanel) {
+    private setupDirbtns(freeslots: Direction[], yOffset: number, kubes: CubeBase, sPanel: StackPanel) {
         freeslots.forEach(element => {
             const addBtn = Button.CreateSimpleButton(`${element}`, `${element}`);
             addBtn.width = "40%";
@@ -154,14 +152,14 @@ export class Dirpanels2d {
 
             addBtn.onPointerUpObservable.add(() => {
                 kubes.assignExpression(kubes, element);
-                this.updateVis(false);
+                this.updateVisibility(false);
                 this.clearpanels();
             });
-            p.addControl(addBtn);
+            sPanel.addControl(addBtn);
         });
     }
 
-    private setupdelbtn(p: StackPanel, kubes: CubeBase) {
+    private setupDeletebtn(sPanel: StackPanel, kubes: CubeBase) {
         const delbutton = Button.CreateSimpleButton("delete", "Delete");
         delbutton.width = "40%";
         delbutton.height = "40px";
@@ -170,6 +168,6 @@ export class Dirpanels2d {
         delbutton.onPointerUpObservable.add(() => {
             kubes.deleteExpression();
         })
-        p.addControl(delbutton);
+        sPanel.addControl(delbutton);
     }
 }

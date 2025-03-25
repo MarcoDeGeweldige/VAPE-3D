@@ -4,7 +4,7 @@
 import { AdvancedDynamicTexture, Button, Container, Control, Rectangle, StackPanel, TextBlock } from "@babylonjs/gui";
 import { ExpresionDisplay } from "./refactoredmaneger";
 import { CubeBase } from "./Kubes";
-import { ExpressionUiManeger, setupCameraControls } from "./ExpressionUiManager";
+import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { FreeCamera, KeyboardEventTypes, Scene, Vector3 } from "@babylonjs/core";
 import { OperatorCube } from "./OperatorKube";
 import { evaluate } from "mathjs";
@@ -53,13 +53,12 @@ export class UISingleton {
             });
         }
         if (sce) {
-            setupCameraControls(sce);
             sce.onKeyboardObservable.add((keyboardEvent) => {
 
                 if (keyboardEvent.type === KeyboardEventTypes.KEYDOWN) {
                     if (keyboardEvent.event.ctrlKey) {
 
-                        this.paneldis.updateVis(!this.paneldis.isVisible);
+                        this.paneldis.updateVisibility(!this.paneldis.isVisible);
                         this.oper.updateVis(false);
         
                     }
@@ -91,10 +90,6 @@ export class UISingleton {
 
     public getExText() {
         if (this.rootOperatorCube) {
-
-            //console.log(this.rootOperatorCube.getText() + "this is the returned expression");
-            //console.log(evaluate(this.rootOperatorCube.getText()));
-
             return this.rootOperatorCube.getText();
         }
         else {
@@ -125,7 +120,7 @@ export class UISingleton {
 
         if (this.paneldis.isVisible) {
 
-            this.paneldis.updateVis(false);
+            this.paneldis.updateVisibility(false);
 
             this.oper.updateVis(true);
         }

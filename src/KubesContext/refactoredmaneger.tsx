@@ -72,10 +72,8 @@ export class InputManager {
 
 // Set up an input box for a specific button
 export function setupInputBox(button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
-    //const inputBox = new InputText();
     const manager = new InputManager();
 
-    //manager.addInputBox(inputBox);
     InputManager.attachInputListeners(manager.inputBox, button, onclose, uptxt);
 }
 
@@ -104,7 +102,6 @@ export function removeInput(input: InputText, hud: AdvancedDynamicTexture): void
     hud.removeControl(input);
 }
 
-// Example manager class for handling input and UI interactions
 export class NewManager {
     static setupInputForButton(button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
         setupInputBox(button, onclose.bind(this), uptxt.bind(this));

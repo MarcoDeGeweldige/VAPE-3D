@@ -8,9 +8,6 @@ import { OperatorCube } from "./OperatorKube";
 import { UISingleton } from "./UIFunctions";
 import { Direction, DirectionVectors } from "./VectorDirections";
 
-
-
-//https://zzzcode.ai/code-review?id=89a767fb-b79f-4ff9-8e77-001ec3274038
 const CubeSize = { width: 2, height: 1.5, depth: 3 };
 
 export interface CubeBase {
@@ -138,7 +135,6 @@ export class Cube implements CubeBase {
     this.model.dispose();
   }
 
-  //laat staan
   updateColor(mat? : Material): void {
     if(mat){
       this.model.material = mat;
@@ -155,8 +151,6 @@ export class Cube implements CubeBase {
         mat.diffuseColor = new Color3(0, 255, 0);
         this.model.material = mat;
       }
-
-
     }
   }
 
@@ -186,11 +180,6 @@ export class CubeSlots {
 
 }
 
-
-// function vecToLocal(vector: Vector3, mesh: Mesh): Vector3 {
-//   return Vector3.TransformCoordinates(vector, mesh.getWorldMatrix());
-// }
-
 export function calculateEndPosition(pos: Vector3, dir: Direction): Vector3 {
   return pos.add(DirectionVectors[dir].scale(4));
 }
@@ -214,11 +203,7 @@ export function scanDirections(model: Mesh, showLines: boolean = false): Directi
   let anything: Direction[] = [];
   Object.values(Direction).forEach((dir) => {
     const vector = DirectionVectors[dir];
-    //const richting = vecToLocal(vector, model);
-    //var direction = richting.subtract(origin);
-    //direction = Vector3.Normalize(direction);
     var length = 4;
-    //was direction
     var ray = new Ray(origin, vector, length);
     const sce = UISingleton.getInstance().getScene();
     if (sce) {
