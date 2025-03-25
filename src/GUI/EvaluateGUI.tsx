@@ -6,7 +6,7 @@ import InputField from "./Components/InputField";
 import PositionArea from "./Components/PositionArea";
 import IconButtonLarge from "./Components/IconButtonLarge";
 import { BuilderSingleton } from "../KubesContext/switchabalecanavas";
-import { BlindTwoTone } from "@mui/icons-material";
+import { BlindTwoTone, ViewInAr } from "@mui/icons-material";
 
 export default function EvaluateGUI({ selectedObject }: { selectedObject: EvaluateObject }) {
   const guiBox = selectedObject.getDataContainer();
@@ -62,7 +62,7 @@ export default function EvaluateGUI({ selectedObject }: { selectedObject: Evalua
               BuilderSingleton.getInstance().renderNewBuilderCanvas(selectedObject.changeStatement.bind(selectedObject));
               selectedObject.onDeselect();
             }}
-            icon={<BlindTwoTone />}
+            icon={<ViewInAr />}
           />
         </Grid>
         <Grid item>
