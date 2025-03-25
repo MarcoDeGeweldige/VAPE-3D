@@ -54,23 +54,15 @@ function ExpressionBuilder() {
       camera.orthoRight = orthoSize * aspectRatio;
       camera.orthoTop = orthoSize;
       camera.orthoBottom = -orthoSize;
-
-      //CubeMenuBar();
-      //camera.projectionPlaneTilt = 6;
       camera.attachControl(canvasRef.current, true);
 
       scene.activeCameras = [camera, guiCamera];
-
-      //clears all basic inputs
-      //camera.inputs.clear();
       new HemisphericLight("light1", new Vector3(0, 1, 0), scene);
       const CubeSize = { width: 2, height: 1.5, depth: 3 };
       const manager = new GUI3DManager(scene);
       manager.utilityLayer?.setRenderCamera(camera);
 
-      
-
-      
+    
       const managerExp = new ExpressionUiManeger(manager);
       const rootCube = new OperatorCube(managerExp, new Vector3(0, 0, 0), "start");
 

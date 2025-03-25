@@ -51,10 +51,6 @@ export class DisplayPanel3D {
         this.interactionPanel.setVisibility(visible);
     }
 
-    //delete this
-    getCubeSidesT() {
-        return this.cubeBase.getSlots;
-    }
 
     deletePanels(){
         this.interactionPanel.deletePanel();

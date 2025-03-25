@@ -33,8 +33,6 @@ export class Dirpanels2d {
         e.resizeToFit = false;
         e.verticalAlignment = Control.VERTICAL_ALIGNMENT_CENTER;
         this.btns = e;
-
-        //this.panel.addControl(e);
     }
 
     getPanel(): Rectangle {
@@ -43,10 +41,6 @@ export class Dirpanels2d {
 
     getContainer(): Container {
         return this.cont;
-    }
-
-    getButtonText(): TextBlock {
-        return this.btns;
     }
 
     updateVis(v: boolean) {
@@ -106,7 +100,6 @@ export class Dirpanels2d {
                         updateText(vUnit.name);
                         this.updateVis(false);
                     })
-                    //varContainer.addControl(addBtn);
                     this.cont.addControl(addBtn);
                     
 
@@ -120,7 +113,6 @@ export class Dirpanels2d {
 
     //using this to add an directional expression
     setUpControls(kubes: CubeBase, manager: ExpressionUiManeger, updateText: (txt: string) => void) {
-
 
         const freeslots = kubes.getSlots().getAvailableSidesN();
         const con = new Container();

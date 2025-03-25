@@ -1,6 +1,6 @@
 
 
-import BabylonSce from "./chatgippety";
+import BabylonSce from "./ExpressionCanvas";
 import { createRoot, Root } from "react-dom/client";
 
 
