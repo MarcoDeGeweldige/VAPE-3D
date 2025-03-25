@@ -1,7 +1,7 @@
 
 import { AdvancedDynamicTexture, Button3D, InputText, TextBlock } from "@babylonjs/gui";
-import { GetText } from "./Contextoptions";
-import { VerticalAlignBottom } from "@mui/icons-material";
+import { SetTextBlock } from "./Contextoptions";
+import { UISingleton } from "./UIFunctions";
 
 export class InputManager {
     private advancedUI: AdvancedDynamicTexture;
@@ -15,6 +15,7 @@ export class InputManager {
         this.inputBox = createInputBox();
         this.expressiondis = new ExpresionDisplay();
         this.advancedUI.addControl(this.expressiondis.getExpressionBox());
+        this.inputBox.zIndex = 100;
         this.advancedUI.addControl(this.inputBox);
     }
 
@@ -32,21 +33,38 @@ export class InputManager {
         return this.inputBox;
     }
 
+
     // Attach listeners for keyboard input
     static attachInputListeners(input: InputText, button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
         input.onBeforeKeyAddObservable.add((event) => {
-            button.content = GetText(event.text);
-
+            button.content = SetTextBlock(event.text);
         });
+        
+
+        const eContainer =
+
+        UISingleton.getInstance().getScene()!.onKeyboardObservable.add((event) => {
+            switch(event.event.key){
+                case "Escape" :
+                    console.log("closing input box", input.text);
+                    button.isVisible = false; // Example action: Hide button
+                    input.isVisible = false;
+                    onclose(false);
+                    eContainer?.remove(); 
+                break;
+            }
+        })
+
         // Handle keyboard events (e.g., pressing Enter)
         input.onKeyboardEventProcessedObservable.add((keyboardEvent) => {
             if (keyboardEvent.key === "Enter") {
                 console.log("Enter key pressed. Current input:", input.text);
-                button.content = GetText(input.text); // Update button content
+                button.content = SetTextBlock(input.text); // Update button content
                 button.isVisible = false; // Example action: Hide button
                 uptxt(input.text);
                 input.isVisible = false;
                 onclose(false);
+                eContainer?.remove(); 
             }
         });
     }
@@ -54,10 +72,8 @@ export class InputManager {
 
 // Set up an input box for a specific button
 export function setupInputBox(button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
-    //const inputBox = new InputText();
     const manager = new InputManager();
 
-    //manager.addInputBox(inputBox);
     InputManager.attachInputListeners(manager.inputBox, button, onclose, uptxt);
 }
 
@@ -67,9 +83,10 @@ export function createInputBox(): InputText {
     input.width = "400px";
     input.maxWidth = "400px";
     input.height = "40px";
-    input.text = "Type here...";
+    input.text = "";
     input.color = "white";
     input.background = "green";
+    
     return input;
 }
 
@@ -85,7 +102,6 @@ export function removeInput(input: InputText, hud: AdvancedDynamicTexture): void
     hud.removeControl(input);
 }
 
-// Example manager class for handling input and UI interactions
 export class NewManager {
     static setupInputForButton(button: Button3D, onclose: (vis: boolean) => void, uptxt: (txt: string) => void): void {
         setupInputBox(button, onclose.bind(this), uptxt.bind(this));
@@ -97,22 +113,18 @@ export class NewManager {
 }
 
 
-
 export class ExpresionDisplay {
 
     expressionbox: TextBlock;
-    extrabox?: TextBlock;
     constructor() {
 
         const e = new TextBlock();
-
         e.width = "70%";
         e.height = "20%";
         e.text = "";
         e.color = "white";
         e.resizeToFit = false;
         e.verticalAlignment = 1;
-
         this.expressionbox = e;
     }
 
@@ -120,36 +132,8 @@ export class ExpresionDisplay {
 
         this.expressionbox.text = exp;
     }
-
-    addExtraBox() {
-
-        const e = new TextBlock();
-
-        e.width = "70%";
-        e.height = "20%";
-        e.text = "exra box";
-        e.color = "white";
-        e.resizeToFit = false;
-        e.verticalAlignment = 1;
-        this.extrabox = e;
-        return e;
-
-
-    }
-
     getExpressionBox() {
         return this.expressionbox;
     }
-    getExtraBox(): TextBlock {
-
-        if (this.extrabox) {
-            return this.extrabox;
-        }
-        else {
-
-            return this.addExtraBox();
-        }
-    }
-
 }
 

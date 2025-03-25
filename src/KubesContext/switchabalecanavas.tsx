@@ -1,24 +1,19 @@
 
 
-import BabylonSce from "./chatgippety";
-import { createRoot, Root } from "react-dom/client";
+import BabylonSce from "./ExpressionCanvas";
+import { createRoot } from "react-dom/client";
 
 
 export class BuilderSingleton {
   private static instance: BuilderSingleton;
-
-  private builderCanvas = <BabylonSce />;
   public createdRoot = false;
-
   private expressionResult = "";
-
 
   private select?: (statement: string) => void;
 
   constructor() {
 
   }
-
 
   //gebruik dit voor expressies
   public getCubeRenderer(): HTMLElement {
@@ -28,13 +23,8 @@ export class BuilderSingleton {
     evalGuiDiv.style.left = "0px";
     evalGuiDiv.style.width = "100%";
     evalGuiDiv.style.height = "100%";
-    // evalGuiDiv.style.visibility = "invisible";
     return evalGuiDiv;
   }
-
-
-
-
 
   public static getInstance(): BuilderSingleton {
     if (!BuilderSingleton.instance) {
@@ -43,7 +33,6 @@ export class BuilderSingleton {
     return BuilderSingleton.instance;
   }
 
-  //deze is belangrijk
 
   public setDataContainer(updateStatement: (statement: string) => void) {
 
@@ -51,10 +40,6 @@ export class BuilderSingleton {
 
   }
 
-  public getBuilderCanvasBad() {
-
-    return this.builderCanvas;
-  }
   public getnewBuilderCanvas() {
 
     return <BabylonSce />;
@@ -69,17 +54,14 @@ export class BuilderSingleton {
   }
 
 
+  //return back to the vape scene
   public switchToStart(res: string) {
 
     this.expressionResult = res;
     this.setExpressionResult(res);
-
-
     this.renderStart();
 
     return this.expressionResult;
-
-
   }
 
   public renderStart() {
@@ -96,9 +78,6 @@ export class BuilderSingleton {
         this.createdRoot = true;
         const root = createRoot(container!);
         root.render(this.getnewBuilderCanvas());
-
-      }
-      else {
 
       }
     }

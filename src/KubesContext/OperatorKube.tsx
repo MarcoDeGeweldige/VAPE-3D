@@ -2,13 +2,13 @@
 import { Mesh, Vector3, MeshBuilder, StandardMaterial, Color3, Material } from "@babylonjs/core";
 import { TextBlock, StackPanel3D } from "@babylonjs/gui";
 
-import { ConnectPipec, GetText, addPanell } from "./Contextoptions";
+import { CreatePipe, SetTextBlock, addNew3DPanell } from "./Contextoptions";
 import { calculateEndPosition, Cube, CubeBase, CubeSlots, getFreeDirection, scanDirections } from "./Kubes";
 
-import { ContextPanel, CubeType } from "./ContextPanel";
+import { DisplayPanel3D, CubeType } from "./ContextPanel";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { UISingleton } from "./UIFunctions";
-import { Direction, DirectionVectors } from "./VectorDirections";
+import { Direction } from "./VectorDirections";
 
 const CubeSize = { width: 2, height: 1.5, depth: 3 };
 
@@ -17,37 +17,37 @@ export class OperatorCube implements CubeBase {
   model: Mesh;
   _pos: Vector3;
   _txt: string = "";
-  text2: TextBlock;
+  textBlock: TextBlock;
   panel: StackPanel3D;
-  conPanel: ContextPanel;
+  displayPanel: DisplayPanel3D;
   inputA: Cube;
   inputB: Cube;
   OutputCube: Cube;
-  cType: CubeType;
+  cubeType: CubeType;
   parent?: Cube;
   slots: CubeSlots;
   pipes: Mesh[] = [];
 
-
-  constructor(manager: ExpressionUiManeger, pos: Vector3, desc: string, outputCube?: Cube, dir: Direction = Direction.Up) {
-    this._pos = pos;
+  constructor(manager: ExpressionUiManeger, position: Vector3, description: string, outputCube?: Cube, dir: Direction = Direction.Up) {
+    this._pos = position;
     this.manager = manager;
-    this._txt = desc;
-    this.text2 = GetText(desc);
+    this._txt = description;
+    this.textBlock = SetTextBlock(description);
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
-    this.model.position = pos;
-    this.cType = CubeType.Operator;
+    this.model.position = position;
+    this.cubeType = CubeType.Operator;
 
     if (outputCube) {
       outputCube.setAsOutputKube(this);
-      this.pipes.push(ConnectPipec(this.getPos(), outputCube.getPos(), new Vector3(1, 1, 1), dir));
+      this.pipes.push(CreatePipe(this.getPosition(), outputCube.getPosition(), dir));
     }
-    this.slots = new CubeSlots(pos, this.getModel());
-    this.conPanel = new ContextPanel(manager, pos, this, desc);
-    this.panel = addPanell(this.conPanel, pos, desc, manager.Getmanager(), manager.GetScene());
-    this.updateColorI();
-    this.inputA = this.createOperandKubes(manager, this._pos, Direction.Left, "AA", CubeType.Operand);
-    this.inputB = this.createOperandKubes(manager, this._pos, Direction.Down, "BB", CubeType.Operand);
+    this.slots = new CubeSlots(position, this.getModel());
+    this.displayPanel = new DisplayPanel3D(manager, position, this, description);
+    this.panel = addNew3DPanell(this.displayPanel, position, description, manager.Getmanager(), manager.GetScene());
+    this.updateColor();
+    this.inputA = this.createOperandCubes(manager, this._pos, Direction.Left, "AA", CubeType.Operand);
+    this.inputB = this.createOperandCubes(manager, this._pos, Direction.Down, "BB", CubeType.Operand);
+
     this.OutputCube = this.setOutPutCube(dir, outputCube);
     UISingleton.getInstance().setRootExpression(this);
 
@@ -64,13 +64,13 @@ export class OperatorCube implements CubeBase {
       return false;
     }
   }
-  assignEx(output: CubeBase, dir: Direction): void {
+  assignExpression(output: CubeBase, dir: Direction): void {
     console.log("don't call this");
   }
   setText(txt: string): void {
     this._txt = txt;
   }
-  getPos(): Vector3 {
+  getPosition(): Vector3 {
     return this._pos;
   }
 
@@ -80,7 +80,7 @@ export class OperatorCube implements CubeBase {
       return outCube;
     }
     else {
-      return this.createOperandKubes(this.manager, this._pos, dir, "CC", CubeType.Operand);
+      return this.createOperandCubes(this.manager, this._pos, dir, "CC", CubeType.Operand);
     }
   }
 
@@ -94,72 +94,64 @@ export class OperatorCube implements CubeBase {
   getSlots(): CubeSlots {
     return this.slots;
   }
-  getCType(): CubeType {
-    return this.cType;
+  getCubeType(): CubeType {
+    return this.cubeType;
   }
 
   createSubOperator(outputCube: Cube, dir: Direction) {
 
     if (outputCube === outputCube.OperatorCube.inputA) {
-      let directionalPos = calculateEndPosition(outputCube.getPos(), dir);
-      const n = new OperatorCube(this.manager, directionalPos, "SB", this.inputA, dir);
-      n.setParent(outputCube);
-
+      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPosition(), dir), "SB", this.inputA, dir).setParent(outputCube);
     }
     if (outputCube === outputCube.OperatorCube.inputB) {
-      let directionalPos = calculateEndPosition(outputCube.getPos(), dir);
-      const n = new OperatorCube(this.manager, directionalPos, "SB", this.inputB, dir);
-      n.setParent(outputCube);
+      new OperatorCube(this.manager, calculateEndPosition(outputCube.getPosition(), dir), "SB", this.inputB, dir).setParent(outputCube);
     }
 
   }
 
-  deleteExpression(): void {
+  resetOutputCube(){
 
+    this.OutputCube.resetOutputCube();
+  }
+
+  //delete expression if there is no subexpression
+  deleteExpression(): void {
     if (!this.hasSubOperator()) {
       this.inputA.deleteMesh();
       this.inputB.deleteMesh();
+      this.resetOutputCube();
       this.clearParent();
       this.deleteMesh();
       UISingleton.getInstance().updateDisplay();
     }
   }
 
+  //removed the assigned suboperator cube
   clearParent() {
     if (this.parent) {
       this.parent.SubOperatorCube = undefined;
     }
   }
 
-  createOperandKubes(manager: ExpressionUiManeger, pos: Vector3, dir: Direction, desc: string, Ctype: CubeType) {
-
-    let freedirs = scanDirections(this.model, true);
-
-    console.log("dir picked = " + DirectionVectors[dir]);
-    if (freedirs.includes(dir)) {
-      console.log("direction is safe " + dir)
-      let directionalPos = calculateEndPosition(pos, dir);
-      const newCube = new Cube(manager, directionalPos, desc, Ctype, this, dir);
-      this.pipes.push(ConnectPipec(this.getPos(), newCube._pos, new Vector3(1, 1, 1), dir));
+  createOperandCubes(expressionManager: ExpressionUiManeger, position: Vector3, direction: Direction, description: string, cubeType: CubeType): Cube {
+    if(scanDirections(this.model, true).includes(direction)){
+      const newCube = new Cube(expressionManager, calculateEndPosition(position, direction), description, cubeType, this, direction);
+      this.pipes.push(CreatePipe(this.getPosition(), newCube._pos, direction));
       return newCube;
-
     }
-    else {
-      console.log("direction taken " + dir);
-      let nextdir = getFreeDirection(freedirs);
-      let directionalPos = calculateEndPosition(pos, nextdir);
-      const newCube = new Cube(manager, directionalPos, desc, Ctype, this, nextdir);
-      this.pipes.push(ConnectPipec(this.getPos(), newCube._pos, new Vector3(1, 1, 1), nextdir));
+    else{
+      let nextdir = getFreeDirection(scanDirections(this.model, true));
+      const newCube = new Cube(expressionManager, calculateEndPosition(position, nextdir), description, cubeType, this, nextdir);
+      this.pipes.push(CreatePipe(this.getPosition(), newCube._pos, nextdir));
       return newCube;
     }
   }
 
-
+  
   deleteMesh() {
-
     this.model.isVisible = false;
     this.panel.dispose();
-    this.conPanel.deletePanels();
+    this.displayPanel.deletePanels();
     this.pipes.forEach(elemt => {
       elemt.dispose();
     })
@@ -167,24 +159,26 @@ export class OperatorCube implements CubeBase {
 
   }
 
-  updateColorI() {
-    const mat = new StandardMaterial("red", this.manager.GetScene());
-    mat.diffuseColor = new Color3(255, 0, 0);
-    this.model.material = mat;
-  }
 
   getText(): string {
-    console.log(this._txt);
     if (this.inputA) {
       return "(" + this.inputA.getText() + " " + this._txt + " " + this.inputB.getText() + ")";
-
     }
     else {
-      return "mo input a";
+      return "no input a";
     }
   }
-  updateColor(mat: Material) {
-    this.model.material = mat;
+  updateColor(material?: Material) {
+
+    if(material){
+
+      this.model.material = material;
+    }
+    else{
+      const material = new StandardMaterial("red", this.manager.GetScene());
+      material.diffuseColor = new Color3(255, 0, 0);
+      this.model.material = material;
+    }
   }
 }
 

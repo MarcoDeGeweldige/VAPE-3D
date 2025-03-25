@@ -1,13 +1,12 @@
 
-import { Mesh, Vector3, MeshBuilder, Material, StandardMaterial, Color3, Ray, RayHelper } from "@babylonjs/core";
+import { Mesh, Vector3, MeshBuilder, Material, StandardMaterial, Color3, Ray } from "@babylonjs/core";
 import { TextBlock, StackPanel3D } from "@babylonjs/gui";
-import { addPanell, GetText } from "./Contextoptions";
-import { ContextPanel, CubeType } from "./ContextPanel";
+import { addNew3DPanell, SetTextBlock } from "./Contextoptions";
+import { DisplayPanel3D, CubeType } from "./ContextPanel";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { OperatorCube } from "./OperatorKube";
 import { UISingleton } from "./UIFunctions";
 import { Direction, DirectionVectors } from "./VectorDirections";
-
 
 const CubeSize = { width: 2, height: 1.5, depth: 3 };
 
@@ -15,15 +14,14 @@ export interface CubeBase {
 
   deleteMesh(): void;
   deleteExpression(): void;
-  updateColorI(): void;
   getText(): string;
   setText(txt: string): void;
-  updateColor(mat: Material): void;
-  getPos(): Vector3;
+  updateColor(mat?: Material): void;
+  getPosition(): Vector3;
   getModel(): Mesh;
   getSlots(): CubeSlots;
-  getCType(): CubeType;
-  assignEx(output: CubeBase, dir: Direction): void;
+  getCubeType(): CubeType;
+  assignExpression(output: CubeBase, dir: Direction): void;
   hasSubOperator(): boolean;
   setParent(kubes: Cube): void;
 }
@@ -34,49 +32,50 @@ export class Cube implements CubeBase {
   model: Mesh;
   _pos: Vector3;
   _txt: string;
-  text2: TextBlock;
+  initialDescription : string;
+  textBlock: TextBlock;
   panel: StackPanel3D;
-  conPanel: ContextPanel;
-  cType: CubeType;
+  displayPanel: DisplayPanel3D;
+  cubeType: CubeType;
   isOutPutCube = false;
   OperatorCube: OperatorCube;
   SubOperatorCube?: OperatorCube;
   parent?: Cube;
   slots: CubeSlots;
 
-  constructor(manager: ExpressionUiManeger, pos: Vector3, desc: string, cubeType: CubeType, operator: OperatorCube, dir: Direction) {
+  constructor(manager: ExpressionUiManeger, position: Vector3, description: string, cubeType: CubeType, operator: OperatorCube, dir: Direction) {
     this.manager = manager;
-    this.cType = cubeType;
+    this.cubeType = cubeType;
     this.OperatorCube = operator;
     this.model = MeshBuilder.CreateBox("cube", CubeSize, manager.GetScene());
-    this._txt = desc;
-    this.text2 = GetText(desc);
-
-    this.slots = new CubeSlots(pos, this.getModel());
-    this._pos = pos;
-    this.conPanel = new ContextPanel(manager, pos, this, desc);
-    this.panel = addPanell(this.conPanel, pos, desc, manager.Getmanager(), manager.GetScene());
-    this.model.position = pos;
-    this.updateColorI();
+    this._txt = description;
+    this.initialDescription = description;
+    this.textBlock = SetTextBlock(description);
+    this.slots = new CubeSlots(position, this.getModel());
+    this._pos = position;
+    this.displayPanel = new DisplayPanel3D(manager, position, this, description);
+    this.panel = addNew3DPanell(this.displayPanel, position, description, manager.Getmanager(), manager.GetScene());
+    this.model.position = position;
+    this.updateColor();
   }
   setParent(kubes: Cube): void {
-
     this.parent = kubes;
   }
   deleteExpression(): void {
+    console.log("delete expresion called");
     this.OperatorCube.deleteExpression();
   }
   getModel(): Mesh {
     return this.model;
   }
-  assignEx(output: CubeBase, dir: Direction): void {
+  assignExpression(output: CubeBase, dir: Direction): void {
     if (output instanceof Cube) {
       this.assignSubExpression(output, dir);
     }
 
   }
-  getCType(): CubeType {
-    return this.cType;
+  getCubeType(): CubeType {
+    return this.cubeType;
   }
   getSlots(): CubeSlots {
     return this.slots;
@@ -84,20 +83,34 @@ export class Cube implements CubeBase {
   setText(txt: string): void {
     this._txt = txt;
   }
-  getPos(): Vector3 {
+  getPosition(): Vector3 {
     return this._pos;
   }
 
   setAsOutputKube(subOperator: OperatorCube) {
 
     this.SubOperatorCube = subOperator;
-
     this.isOutPutCube = true;
-    this._txt = "res";
-    this.text2 = GetText("res");
-    this.conPanel.updateText("res");
-    this.conPanel.setVisibility(false);
+    const resultDescription = "result";
+    this._txt = resultDescription;
+    this.textBlock = SetTextBlock(resultDescription);
+    this.displayPanel.updateText(resultDescription);
+    this.displayPanel.setVisibility(false);
     this.panel.isVisible = false;
+    console.log("this is an output cube");
+  }
+
+  resetOutputCube(){
+
+    this.SubOperatorCube = undefined;
+
+    this.isOutPutCube = false;
+    this._txt = this.initialDescription;
+    this.textBlock = SetTextBlock(this.initialDescription);
+    this.displayPanel.updateText(this.initialDescription);
+    this.displayPanel.setVisibility(false);
+
+
   }
 
   assignSubExpression(kubes: Cube, dir: Direction) {
@@ -105,7 +118,6 @@ export class Cube implements CubeBase {
   }
 
   hasSubOperator(): boolean {
-
     if (this.SubOperatorCube) {
       return true;
     }
@@ -119,22 +131,26 @@ export class Cube implements CubeBase {
 
     this.model.isVisible = false;
     this.panel.dispose();
-    this.conPanel.deletePanels();
+    this.displayPanel.deletePanels();
     this.model.dispose();
   }
 
-  //laat staan
-  updateColorI(): void {
-    if (this.cType == CubeType.Operator) {
-
-      const mat = new StandardMaterial("red", this.manager.GetScene());
-      mat.diffuseColor = new Color3(255, 0, 0);
+  updateColor(mat? : Material): void {
+    if(mat){
       this.model.material = mat;
     }
-    else {
-      const mat = new StandardMaterial("red", this.manager.GetScene());
-      mat.diffuseColor = new Color3(0, 255, 0);
-      this.model.material = mat;
+    else{
+      if (this.cubeType === CubeType.Operator) {
+
+        const mat = new StandardMaterial("red", this.manager.GetScene());
+        mat.diffuseColor = new Color3(255, 0, 0);
+        this.model.material = mat;
+      }
+      else {
+        const mat = new StandardMaterial("green", this.manager.GetScene());
+        mat.diffuseColor = new Color3(0, 255, 0);
+        this.model.material = mat;
+      }
     }
   }
 
@@ -143,9 +159,6 @@ export class Cube implements CubeBase {
       return this._txt;
     }
     return this.SubOperatorCube.getText();
-  }
-  updateColor(mat: Material): void {
-    this.model.material = mat;
   }
 }
 
@@ -160,30 +173,18 @@ export class CubeSlots {
     this.freeSlots = scanDirections(model, false);
     this.cubePos = pos;
   }
-
-
   getAvailableSidesN(): Direction[] {
-
     this.freeSlots = scanDirections(this.model);
     return this.freeSlots;
   }
 
 }
 
-
-function vecToLocal(vector: Vector3, mesh: Mesh) {
-  var m = mesh.getWorldMatrix();
-  var v = Vector3.TransformCoordinates(vector, m);
-  return v;
-}
-
 export function calculateEndPosition(pos: Vector3, dir: Direction): Vector3 {
   return pos.add(DirectionVectors[dir].scale(4));
-
 }
 
 export function getFreeDirection(freeDirs: Direction[]) {
-
   let di = freeDirs.at(0);
 
   if (di) {
@@ -202,20 +203,13 @@ export function scanDirections(model: Mesh, showLines: boolean = false): Directi
   let anything: Direction[] = [];
   Object.values(Direction).forEach((dir) => {
     const vector = DirectionVectors[dir];
-    const richting = vecToLocal(vector, model);
-    var direction = richting.subtract(origin);
-    direction = Vector3.Normalize(direction);
     var length = 4;
-    //was direction
     var ray = new Ray(origin, vector, length);
     const sce = UISingleton.getInstance().getScene();
     if (sce) {
       var hit = sce.pickWithRay(ray);
-
       if (hit) {
         if (hit.pickedMesh && hit.pickedMesh !== model) {
-          //rhel.show(sce);
-
           console.log(vector + "n " + dir + " unable to be used");
         }
         else {
@@ -230,7 +224,6 @@ export function scanDirections(model: Mesh, showLines: boolean = false): Directi
 
   model.isPickable = true;
   return anything;
-
 }
 
 

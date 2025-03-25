@@ -1,70 +1,64 @@
 
 
 
-import { GUI3DManager, StackPanel3D } from "@babylonjs/gui";
-import { addPanell } from "./Contextoptions";
+import { StackPanel3D } from "@babylonjs/gui";
+import { addNew3DPanell } from "./Contextoptions";
 import { Vector3 } from "@babylonjs/core";
 import { CubeBase} from "./Kubes";
 import { ExpressionUiManeger } from "./ExpressionUiManager";
 import { UISingleton } from "./UIFunctions";
-import { TestContext } from "./TestContext";
+import { Interaction3Dpanel } from "./TestContext";
 
 export enum CubeType {
     Operand,
     Operator
 }
 
-export class ContextPanel {
+export class DisplayPanel3D {
     selected: boolean = true;
-    testc: TestContext;
-    panel: StackPanel3D;
-    parent : CubeBase;
+    interactionPanel: Interaction3Dpanel;
+    panel3D: StackPanel3D;
+    cubeBase : CubeBase;
     manager : ExpressionUiManeger;
 
     constructor(
         manager: ExpressionUiManeger,
-        kuubPos: Vector3,
-        parent : CubeBase,
-        desc: string
-
+        cubePosition: Vector3,
+        cubeBase : CubeBase,
+        description: string
     ) {
-        this.parent = parent;
-        this.testc = new TestContext(manager, kuubPos, this, this.updateText.bind(this));
-        this.panel = addPanell(this, kuubPos, desc, manager.Getmanager(), manager.GetScene());
+        this.cubeBase = cubeBase;
+        this.interactionPanel = new Interaction3Dpanel(manager, cubePosition, this, this.updateText.bind(this));
+        this.panel3D = addNew3DPanell(this, cubePosition, description, manager.Getmanager(), manager.GetScene());
         this.manager = manager;
         this.setVisibility(false);
-        
-        
     }
 
     updateText(txt: string): void {
-        this.manager.Getmanager().removeControl(this.panel);
-        this.panel.dispose();
-        this.parent.setText(txt);
-        this.panel = addPanell(this, this.parent.getPos(), txt, this.manager.Getmanager(), this.manager.GetScene());
+        this.manager.Getmanager().removeControl(this.panel3D);
+        this.panel3D.dispose();
+        this.cubeBase.setText(txt);
+        this.panel3D = addNew3DPanell(this, this.cubeBase.getPosition(), txt, this.manager.Getmanager(), this.manager.GetScene());
         UISingleton.getInstance().updateDisplay();
     }
 
     onSelect(): void {
-        this.manager.OpenTab(this.testc);
+        this.manager.OpenTab(this.interactionPanel);
     }
 
     setVisibility(visible: boolean): void {
         this.selected = visible;
-        this.testc.setVisibility(visible);
+        this.interactionPanel.setVisibility(visible);
     }
 
-    getCubeSides() {
-        return this.parent.getSlots;
-    }
 
     deletePanels(){
-        this.testc.deletePanel();
-        this.manager.Getmanager().removeControl(this.panel);
-        this.panel.dispose();
+        this.interactionPanel.deletePanel();
+        this.manager.Getmanager().removeControl(this.panel3D);
+        this.panel3D.dispose();
     }
 
     deleteLinkedExpression(){
-        this.testc.deletePanel();
+        this.interactionPanel.deletePanel();
     }
 }

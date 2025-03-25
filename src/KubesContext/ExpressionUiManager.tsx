@@ -1,16 +1,17 @@
 
 
 import { GUI3DManager } from "@babylonjs/gui";
-import { TestContext } from "./TestContext";
+import { Interaction3Dpanel } from "./TestContext";
 
 
 export class ExpressionUiManeger {
 
-    openTab!: TestContext;
+    openTab!: Interaction3Dpanel;
     manager: GUI3DManager;
 
     constructor(manager: GUI3DManager) {
         this.manager = manager;
+
     }
 
     Getmanager() {
@@ -22,7 +23,7 @@ export class ExpressionUiManeger {
         return this.manager.scene;
     }
 
-    OpenTab(cpanel: TestContext): void {
+    OpenTab(cpanel: Interaction3Dpanel): void {
 
 
         if (this.openTab == null) {
@@ -32,7 +33,7 @@ export class ExpressionUiManeger {
 
         else {
 
-            if (this.openTab == cpanel) {
+            if (this.openTab === cpanel) {
 
                 this.openTab?.setVisibility(!this.openTab.isVisible);
 
@@ -49,3 +50,4 @@ export class ExpressionUiManeger {
     }
 
 }
+
