@@ -14,12 +14,22 @@ export class OperatorButtons {
     }
 
     public setupOperatorButtons(kubes: CubeBase, updateText: (txt: string) => void, onClose: (vis: boolean) => void): void {
-        if (!this.selectedKube || this.selectedKube !== kubes) {
+
+        if(!this.selectedKube){
+
             this.selectedKube = kubes;
-            this.clearPanels();
             this.addControls(updateText, onClose);
-        } else {
-            this.updateVis(true);
+        }
+        else{
+
+            if(this.selectedKube === kubes){
+                this.updateVis(true);
+            }
+            else{
+                this.clearPanels();
+                this.addControls(updateText, onClose);
+                this.selectedKube = kubes;
+            }
         }
     }
 
@@ -28,7 +38,7 @@ export class OperatorButtons {
         this.container.addControl(panel);
 
         ["+", "-", "*", "/"].forEach(op => {
-            const button = Button.CreateSimpleButton(op, op);
+            let button = Button.CreateSimpleButton(op, op);
             button.width = "80%";
             button.height = "40px";
             button.background = "red";
@@ -38,7 +48,6 @@ export class OperatorButtons {
                 updateText(op);
                 onClose(false);
                 this.updateVis(false);
-                this.clearPanels();
             });
 
             panel.addControl(button);
@@ -52,9 +61,9 @@ export class OperatorButtons {
     public updateVis(visible: boolean): void {
         this.isVisible = visible;
         this.container.isVisible = visible;
-        this.container.children.forEach(child => {
+        this.container.children.forEach((child => {
             child.isVisible = visible;
-        });
+        }));
     }
 
     private clearPanels(): void {

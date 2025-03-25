@@ -88,18 +88,17 @@ export class Dirpanels2d {
             }
         }
     }
+    //allows the use of vape scene vars
     setFunction(updateText: (txt: string) => void) {
-        let button = Button.CreateSimpleButton("", "beep");
-        button.width = "80%";
-        button.height = "40px";
-        button.background = "green";
+
         let vinfo = SceneManager.CurrentVapeScene()?.worldInformation;
         if (vinfo instanceof WorldInformation) {
             vinfo.getDataContainerArray().forEach(elemt => {
                 if (elemt.type === 'variable') {
                     const vUnit = elemt as VariableDataContainer;
                     const addBtn = Button.CreateSimpleButton(`${vUnit.name}`, `${vUnit.variableType}`);
-                    addBtn.width = "80%";
+                    addBtn.width = "40%";
+                    addBtn.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
                     addBtn.height = "40px";
                     addBtn.background = "green";
                     addBtn.onPointerClickObservable.add(() => {
@@ -107,7 +106,9 @@ export class Dirpanels2d {
                         updateText(vUnit.name);
                         this.updateVis(false);
                     })
+                    //varContainer.addControl(addBtn);
                     this.cont.addControl(addBtn);
+                    
 
                 }
 
@@ -154,7 +155,7 @@ export class Dirpanels2d {
     private setupDirbtns(freeslots: Direction[], yOffset: number, kubes: CubeBase, p: StackPanel) {
         freeslots.forEach(element => {
             const addBtn = Button.CreateSimpleButton(`${element}`, `${element}`);
-            addBtn.width = "80%";
+            addBtn.width = "40%";
             addBtn.height = "40px";
             addBtn.background = "red";
             addBtn.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
@@ -170,7 +171,7 @@ export class Dirpanels2d {
 
     private setupdelbtn(p: StackPanel, kubes: CubeBase) {
         const delbutton = Button.CreateSimpleButton("delete", "Delete");
-        delbutton.width = "80%";
+        delbutton.width = "40%";
         delbutton.height = "40px";
         delbutton.background = "red";
         delbutton.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;

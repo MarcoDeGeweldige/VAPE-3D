@@ -66,7 +66,7 @@ export class UISingleton {
                 }
                 if (keyboardEvent.type === KeyboardEventTypes.KEYDOWN) {
                     if (keyboardEvent.event.altKey) {
-                        this.confirmPanel.updateVis(true);
+                        this.confirmPanel.updateVis(!this.confirmPanel.isVisible);
                     }
                 }
             })
@@ -92,8 +92,8 @@ export class UISingleton {
     public getExText() {
         if (this.rootOperatorCube) {
 
-            console.log(this.rootOperatorCube.getText() + "this is the returned expression");
-            console.log(evaluate(this.rootOperatorCube.getText()));
+            //console.log(this.rootOperatorCube.getText() + "this is the returned expression");
+            //console.log(evaluate(this.rootOperatorCube.getText()));
 
             return this.rootOperatorCube.getText();
         }

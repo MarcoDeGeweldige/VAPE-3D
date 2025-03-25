@@ -9,7 +9,9 @@ import { BuilderSingleton } from "./switchabalecanavas";
 export class ConfirmPanel {
     private panel: Rectangle;
     private btns: TextBlock;
+    private checkButton? : Button;
     isVisible: boolean = false;
+    isInvalidEpressionPanelOpen : boolean = false;
 
     constructor() {
         this.panel = new Rectangle();
@@ -27,6 +29,7 @@ export class ConfirmPanel {
         textBlock.height = height;
         textBlock.text = text;
         textBlock.color = color;
+    
         textBlock.resizeToFit = false;
         textBlock.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
         textBlock.top = 20;
@@ -39,7 +42,28 @@ export class ConfirmPanel {
         btn.height = "30%";
         btn.background = "white";
         btn.onPointerClickObservable.add(() => this.checkExpressionValid());
+        this.checkButton = btn;
+        this.panel.addControl(this.checkButton);
+    }
+
+    //call this on invalid parse
+    private setupReturnBtn(parseButton : Button){
+        parseButton.isVisible = false;
+        const btn = Button.CreateSimpleButton("return expression", "Expression invalid Return to builder");
+        btn.width = "30%";
+        btn.height = "30%";
+        btn.background = "white";
+        btn.onPointerClickObservable.add(() => this.closeWarning(btn));
         this.panel.addControl(btn);
+
+    }
+
+    private closeWarning(closeButton : Button){
+
+        this.btns.isVisible = false;
+        closeButton.isVisible = false;
+        this.panel.removeControl(closeButton);
+        this.updateVis(false);
     }
 
     private checkExpressionValid() {
@@ -48,8 +72,8 @@ export class ConfirmPanel {
             this.updateButtonText("expression is valid");
             BuilderSingleton.getInstance().switchToStart(UISingleton.getInstance().getExText());
         } catch (error) {
-            console.error("Expression validation failed:", error);
             this.updateButtonText("expression is invalid");
+            this.setupReturnBtn(this.checkButton!);
         }
     }
 
